@@ -1,8 +1,8 @@
 import express, { Router } from "express";
-import { defaultController } from "../controllers";
+import { registerController } from "../controllers";
 
 const router: Router = express.Router();
 
-router.get("/", defaultController.greet);
+router.post("/register", registerController.register);
 
 export default router;

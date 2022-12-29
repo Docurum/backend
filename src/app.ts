@@ -11,7 +11,7 @@ import xss from "xss-clean";
 import "./v1/config/env.config";
 
 import { defaultMiddleware } from "./v1/middlewares";
-import { defaultRoutes } from "./v1/routes";
+import { authRoutes } from "./v1/routes";
 
 // RateLimitter
 const limiter = rateLimit({
@@ -54,7 +54,7 @@ app.all("/", (_req: Request, res: Response, _next: NextFunction) => {
 const apiVersion: string = "v1";
 
 // Routes
-app.use(`/${apiVersion}/default`, defaultRoutes);
+app.use(`/${apiVersion}/auth`, authRoutes);
 
 // 404 Handler
 app.use((_req: Request, _res: Response, next: NextFunction) => {

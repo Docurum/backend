@@ -14,7 +14,7 @@ model User {
   email     String    @unique
   password  String
   dob       DateTime?
-  blocked   Boolean?  @default(false)
+  blocked   Boolean   @default(false)
   isDoctor  Boolean   @default(false)
   doctor    Doctor?
   createdAt DateTime  @default(now())

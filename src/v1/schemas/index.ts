@@ -1,4 +1,19 @@
+/* eslint-disable no-template-curly-in-string */
+
 import { z } from "zod";
+
+export const envSchema = z.object({
+  PORT: z
+    .string()
+    .default("5000")
+    .transform((port) => Number(port)),
+  FRONTEND_URL: z.string().default("http://localhost:3000"),
+  DEV_DB_URL: z.string(),
+  TEST_DB_URL: z.string(),
+  PROD_DB_URL: z.string().optional(),
+  DATABASE_URL: z.string().default("${DEV_DB_URL}"),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+});
 
 const capitalizeEveryFirstLetter = (s: string): string => {
   const arr = s.split(" ");

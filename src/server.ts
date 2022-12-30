@@ -1,7 +1,26 @@
+import { ZodError } from "zod";
 import app from "./app";
+import { envSchema } from "./v1/schemas";
 
-// Server Configs
-const PORT: number = Number(process.env.PORT) || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 @ http://localhost:${PORT}`);
-});
+const startServer = (): void => {
+  try {
+    const result = envSchema.parse(process.env);
+    const PORT: number = result.PORT || 5000;
+    app.listen(PORT, () => {
+      if (result.NODE_ENV === "development") {
+        console.log(`🚀 @ http://localhost:${PORT}`);
+      } else {
+        console.log(`🚀 @ PORT: ${PORT}`);
+      }
+    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      console.log(err.issues);
+      console.log("Check .env file!! 🚂");
+      return;
+    }
+    console.log("Error in Starting Server !! 💀");
+  }
+};
+
+startServer();

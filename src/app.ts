@@ -12,6 +12,7 @@ import "./v1/config/env.config";
 
 import { defaultMiddleware } from "./v1/middlewares";
 import { authRoutes } from "./v1/routes";
+import config from "./v1/config";
 
 // RateLimitter
 const limiter = rateLimit({
@@ -26,7 +27,7 @@ const limiter = rateLimit({
 });
 
 const corsOption = {
-  origin: [String(process.env.FRONTEND_URL)],
+  origin: [config.FRONTEND_URL],
 };
 
 const app: Express = express();

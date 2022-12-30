@@ -9,7 +9,9 @@
     "build": "npx tsc && copyfiles -u 1 src/public/* build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
-    "test": "set DB_URL=${TEST_DB_URL} && npm run prisma:migrate && jest --watchAll",
+    "upgradeTestEnv": "node src/env/upgradeTest.js",
+    "downgradeTestEnv": "node src/env/downgradeTest.js",
+    "test": "npm run upgradeTestEnv && npm run prisma:migrate && npm run downgradeTestEnv && jest --watchAll",
     "prisma:migrate": "npx prisma migrate dev"
   },
   "keywords": [],

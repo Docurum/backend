@@ -9,7 +9,7 @@ const registerController = {
   async register(req: Request<{}, {}, registerRequestBodyType>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = registerSchema.parse(req.body);
-      res.json(resp);
+      res.status(201).json(resp);
     } catch (err: any) {
       if (err instanceof ZodError) {
         return next({ status: createError.InternalServerError().status, message: err.issues });

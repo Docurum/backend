@@ -70,8 +70,4 @@ app.use((err: HttpError, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Server Configs
-const PORT: number = Number(process.env.PORT) || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 @ http://localhost:${PORT}`);
-});
+export default app;

@@ -21,6 +21,7 @@
       }
     ],
     "@typescript-eslint/strict-boolean-expressions": "off",
-    "@typescript-eslint/quotes": "off"
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/member-delimiter-style": "off"
   }
 }

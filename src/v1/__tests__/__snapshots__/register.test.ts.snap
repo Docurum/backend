@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`register user should throw error for invalid payload 1`] = `
+"{
+  "status": 500,
+  "message": [
+    {
+      "validation": "regex",
+      "code": "invalid_string",
+      "message": "Invalid",
+      "path": [
+        "username"
+      ]
+    },
+    {
+      "validation": "email",
+      "code": "invalid_string",
+      "message": "Invalid email",
+      "path": [
+        "email"
+      ]
+    },
+    {
+      "code": "too_small",
+      "minimum": 8,
+      "type": "string",
+      "inclusive": true,
+      "exact": false,
+      "message": "String must contain at least 8 character(s)",
+      "path": [
+        "password"
+      ]
+    },
+    {
+      "validation": "regex",
+      "code": "invalid_string",
+      "message": "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.",
+      "path": [
+        "password"
+      ]
+    },
+    {
+      "code": "too_small",
+      "minimum": 8,
+      "type": "string",
+      "inclusive": true,
+      "exact": false,
+      "message": "String must contain at least 8 character(s)",
+      "path": [
+        "confirmPassword"
+      ]
+    },
+    {
+      "validation": "regex",
+      "code": "invalid_string",
+      "message": "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.",
+      "path": [
+        "confirmPassword"
+      ]
+    },
+    {
+      "code": "unrecognized_keys",
+      "keys": [
+        "abc"
+      ],
+      "path": [],
+      "message": "Unrecognized key(s) in object: 'abc'"
+    }
+  ]
+}"
+`;
+
+exports[`register user should throw error for no payload 1`] = `
+"{
+  "status": 500,
+  "message": [
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+        "name"
+      ],
+      "message": "Required"
+    },
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+        "username"
+      ],
+      "message": "Required"
+    },
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+        "email"
+      ],
+      "message": "Required"
+    },
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+        "password"
+      ],
+      "message": "Required"
+    },
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+        "confirmPassword"
+      ],
+      "message": "Required"
+    }
+  ]
+}"
+`;

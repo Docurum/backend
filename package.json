@@ -5,13 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node build/server.js",
-    "dev": "nodemon --files src/server.ts",
+    "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/public/* build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
     "upgradeTestEnv": "node src/env/upgradeTest.js",
     "downgradeTestEnv": "node src/env/downgradeTest.js",
-    "test": "npm run upgradeTestEnv && npm run prisma:migrate && npm run downgradeTestEnv && jest --watchAll",
+    "test": "npm run upgradeTestEnv && npm run prisma:migrate && jest --watchAll",
     "prisma:migrate": "npx prisma migrate dev"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^4.8.0",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0",
@@ -32,6 +33,7 @@
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.14",
     "@types/http-errors": "^2.0.1",
@@ -48,6 +50,7 @@
     "eslint-plugin-n": "^15.6.0",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.3.1",
+    "jest-extended": "^3.2.0",
     "nodemon": "^2.0.20",
     "prisma": "^4.8.0",
     "supertest": "^6.3.3",

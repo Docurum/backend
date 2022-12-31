@@ -8,11 +8,11 @@ import path from "path";
 import favicon from "serve-favicon";
 import xss from "xss-clean";
 
-import "./v1/config/env.config";
+import "@v1/config/env.config";
 
-import { defaultMiddleware } from "./v1/middlewares";
-import { authRoutes } from "./v1/routes";
-import config from "./v1/config";
+import config from "@v1/config";
+import { defaultMiddleware } from "@v1/middlewares";
+import { authRoutes } from "@v1/routes";
 
 // RateLimitter
 const limiter = rateLimit({

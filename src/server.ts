@@ -1,6 +1,6 @@
+import app from "@src/app";
+import { envSchema } from "@v1/schemas";
 import { ZodError } from "zod";
-import app from "./app";
-import { envSchema } from "./v1/schemas";
 
 const startServer = (): void => {
   try {

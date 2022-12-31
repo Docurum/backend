@@ -1,6 +1,6 @@
 import prisma from "@src/prisma";
 import { registerSchema } from "@v1/schemas";
-import { successResp } from "@v1/utils/Response.util";
+import { customResponse } from "@v1/utils/Response.util";
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
@@ -18,7 +18,7 @@ const registerController = {
       const hashedPassword = await bcrypt.hash(resp.password, 10);
       const data: respType = { ...(resp as respType), password: hashedPassword };
       await prisma.user.create({ data });
-      res.status(201).json(successResp(201, "User Registered Successfully"));
+      res.status(201).json(customResponse(201, "User Registered Successfully"));
     } catch (err: any) {
       if (err instanceof ZodError) {
         return next({ status: createError.InternalServerError().status, message: err.issues });

@@ -1,6 +1,6 @@
 import app from "@src/app";
 import prisma from "@src/prisma";
-import { successResp } from "@v1/utils/Response.util";
+import { customResponse } from "@v1/utils/Response.util";
 import "jest-extended";
 import supertest from "supertest";
 
@@ -49,7 +49,7 @@ describe("register user", () => {
     };
     const resp = await supertest(app).post("/v1/auth/register").send(userPayload);
     expect(resp.status).toBe(201);
-    expect(resp.body).toStrictEqual(successResp(201, "User Registered Successfully"));
+    expect(resp.body).toStrictEqual(customResponse(201, "User Registered Successfully"));
   });
   it("should throw error for duplicate payload", async () => {
     const userPayload = {

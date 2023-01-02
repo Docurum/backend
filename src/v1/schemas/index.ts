@@ -7,11 +7,12 @@ export const envSchema = z
   .object({
     PORT: z
       .string()
+      .min(1)
       .default("5000")
       .transform((port) => Number(port)),
     FRONTEND_URL: z.string().default("http://localhost:3000"),
-    DEV_DB_URL: z.string(),
-    TEST_DB_URL: z.string(),
+    DEV_DB_URL: z.string().min(1),
+    TEST_DB_URL: z.string().min(1),
     PROD_DB_URL: z.string().optional(),
     DATABASE_URL: z.string().default("${DEV_DB_URL}"),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -37,6 +38,8 @@ const capitalizeEveryFirstLetter = (s: string): string => {
 
 const nameSchema = z
   .string()
+  .min(3)
+  .max(80)
   .trim()
   .transform((name) => {
     // Also removes additional spaces
@@ -72,6 +75,8 @@ export const usernameSchema = z
 
 export const emailSchema = z
   .string()
+  .min(4)
+  .max(60)
   .email()
   .trim()
   .refine(

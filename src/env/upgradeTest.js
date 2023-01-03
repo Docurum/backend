@@ -10,7 +10,7 @@ const setEnvValue = async (key, value) => {
   ENV_VARS.splice(target, 1, `${key}=${value}`);
   // write everything back to the file system
   await fs.writeFile("./.env", ENV_VARS.join("\n"));
-  console.log(`${key}=${value}`);
+  console.log(`Updated ${key} to ${value}`);
 };
 
 setEnvValue("DATABASE_URL", "${TEST_DB_URL}");

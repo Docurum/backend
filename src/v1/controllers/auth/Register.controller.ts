@@ -1,4 +1,5 @@
 import prisma from "@src/prisma";
+import { sendVerifyMail } from "@src/v1/services";
 import { registerSchema } from "@v1/schemas";
 import { customResponse } from "@v1/utils/Response.util";
 import bcrypt from "bcrypt";
@@ -23,6 +24,24 @@ const registerController = {
       if (err instanceof ZodError) {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }
+      return next(createError.InternalServerError());
+    }
+  },
+  async email(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // TODO: Add zod validation
+      const email = req.body.email as string;
+      const replacements = {
+        name: "Pinaki Bhattacharjee",
+        email,
+        link: "https://docurum.com/confirm/abcdef",
+        year: new Date().getFullYear(),
+      };
+      const ans = await sendVerifyMail(replacements, email);
+      console.log(ans);
+      res.json({ send: email });
+    } catch (err) {
+      console.log(err);
       return next(createError.InternalServerError());
     }
   },

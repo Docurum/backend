@@ -15,6 +15,9 @@ export const envSchema = z
     TEST_DB_URL: z.string().min(1),
     PROD_DB_URL: z.string().optional(),
     DATABASE_URL: z.string().default("${DEV_DB_URL}"),
+    GMAIL_ACCOUNT: z.string().min(1),
+    MAILGUN_API_KEY: z.string().min(1),
+    MAILGUN_DOMAIN: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

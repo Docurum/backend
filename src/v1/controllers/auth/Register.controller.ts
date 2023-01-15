@@ -1,4 +1,5 @@
 import prisma from "@src/prisma";
+import config from "@src/v1/config";
 import { sendVerifyMail } from "@src/v1/services";
 import { registerSchema } from "@v1/schemas";
 import { customResponse } from "@v1/utils/Response.util";
@@ -19,6 +20,18 @@ const registerController = {
       const hashedPassword = await bcrypt.hash(resp.password, 10);
       const data: respType = { ...(resp as respType), password: hashedPassword };
       await prisma.user.create({ data });
+      try {
+        const replacements = {
+          name: resp.name,
+          email: resp.email,
+          link: config.FRONTEND_URL,
+          year: new Date().getFullYear(),
+        };
+        const ans = await sendVerifyMail(replacements, resp.email);
+        console.log(ans);
+      } catch (err: any) {
+        console.log("Mail not sent to: " + resp.email);
+      }
       res.status(201).json(customResponse(201, "User Registered Successfully"));
     } catch (err: any) {
       if (err instanceof ZodError) {

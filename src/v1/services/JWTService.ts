@@ -2,7 +2,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 const JWTOptions = {
-  issuer: "docurum",
+  issuer: "docurum.com",
 };
 
 // https://github.com/pinakipb2/cuidly/blob/main/backend/auth/src/v1/services/JwtService.js

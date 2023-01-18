@@ -12,7 +12,8 @@
     "upgradeTestEnv": "node src/env/upgradeTest.js",
     "downgradeTestEnv": "node src/env/downgradeTest.js",
     "test": "npm run upgradeTestEnv && npm run prisma:migrate && jest --watchAll",
-    "prisma:migrate": "npx prisma migrate dev"
+    "prisma:migrate": "npx prisma migrate dev",
+    "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
   "keywords": [],
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",

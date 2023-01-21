@@ -20,8 +20,8 @@ const registerController = {
       const hashedPassword = await bcrypt.hash(resp.password, 10);
       const data: respType = { ...(resp as respType), password: hashedPassword };
       const { id, username } = await prisma.user.create({ data });
-      const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_TOKEN);
       try {
+        const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_TOKEN);
         const replacements = {
           name: resp.name,
           email: resp.email,

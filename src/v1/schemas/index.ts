@@ -18,6 +18,7 @@ export const envSchema = z
     GMAIL_ACCOUNT: z.string().min(1),
     MAILGUN_API_KEY: z.string().min(1),
     MAILGUN_DOMAIN: z.string().min(1),
+    EMAIL_CONFIRM_TOKEN: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

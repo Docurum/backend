@@ -1,6 +1,6 @@
 import prisma from "@src/prisma";
 import config from "@src/v1/config";
-import { sendVerifyMail } from "@src/v1/services";
+import { JWTService, sendVerifyMail } from "@src/v1/services";
 import { registerSchema } from "@v1/schemas";
 import { customResponse } from "@v1/utils/Response.util";
 import bcrypt from "bcrypt";
@@ -19,12 +19,13 @@ const registerController = {
       /* Hash the password with 10 salt rounds */
       const hashedPassword = await bcrypt.hash(resp.password, 10);
       const data: respType = { ...(resp as respType), password: hashedPassword };
-      await prisma.user.create({ data });
+      const { id, username } = await prisma.user.create({ data });
+      const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_TOKEN);
       try {
         const replacements = {
           name: resp.name,
           email: resp.email,
-          link: config.FRONTEND_URL,
+          link: config.FRONTEND_URL + "/email-confirm/" + linkToken,
           year: new Date().getFullYear(),
         };
         const ans = await sendVerifyMail(replacements, resp.email);
@@ -37,24 +38,6 @@ const registerController = {
       if (err instanceof ZodError) {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }
-      return next(createError.InternalServerError());
-    }
-  },
-  async email(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      // TODO: Add zod validation
-      const email = req.body.email as string;
-      const replacements = {
-        name: "Pinaki Bhattacharjee",
-        email,
-        link: "https://docurum.com/confirm/abcdef",
-        year: new Date().getFullYear(),
-      };
-      const ans = await sendVerifyMail(replacements, email);
-      console.log(ans);
-      res.json({ send: email });
-    } catch (err) {
-      console.log(err);
       return next(createError.InternalServerError());
     }
   },

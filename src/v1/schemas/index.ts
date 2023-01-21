@@ -116,7 +116,7 @@ export const registerSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,
-    picture: z.string().optional(),
+    picture: z.string().nullish(),
     isDoctor: z.boolean().default(false),
   })
   .strict()

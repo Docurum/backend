@@ -9,7 +9,7 @@ import { ZodError, z } from "zod";
 
 const emailConfirmSchema = z
   .object({
-    token: z.string().min(1),
+    token: z.string().min(1, "Token is missing in URL"),
   })
   .strict();
 

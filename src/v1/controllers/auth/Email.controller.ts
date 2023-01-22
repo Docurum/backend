@@ -21,6 +21,15 @@ const emailController = {
       const { token } = await emailConfirmSchema.parseAsync(req.params);
       const { aud } = JWTService.decode(token) as { aud: string };
       const { id } = JWTService.verify(token, aud, config.EMAIL_CONFIRM_TOKEN) as { id: string };
+      const { isEmailVerified } = await prisma.user.findUniqueOrThrow({
+        where: {
+          id,
+        },
+      });
+      if (isEmailVerified) {
+        res.send(customResponse(200, "Your email has been already verified !"));
+        return;
+      }
       await prisma.user.update({
         where: {
           id,

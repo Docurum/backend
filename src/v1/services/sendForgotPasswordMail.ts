@@ -19,9 +19,9 @@ interface Ireplacements {
   year: number;
 }
 
-const sendVerifyMail = async (replacements: Ireplacements, mailList: string): Promise<any> => {
-  const filePath = path.join(__dirname, "../assets/static/verifyMail.html");
-  const subject = "Activate your Docurum account";
+const sendForgotPasswordMail = async (replacements: Ireplacements, mailList: string): Promise<any> => {
+  const filePath = path.join(__dirname, "../assets/static/resetPasswordMail.html");
+  const subject = "Reset your Docurum Password";
   console.log(replacements);
   if (fs.existsSync(filePath)) {
     const html = fs.readFileSync(filePath, { encoding: "utf-8" });
@@ -54,4 +54,4 @@ const sendVerifyMail = async (replacements: Ireplacements, mailList: string): Pr
   throw new Error("File Not Found");
 };
 
-export default sendVerifyMail;
+export default sendForgotPasswordMail;

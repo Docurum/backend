@@ -19,6 +19,7 @@ export const envSchema = z
     MAILGUN_API_KEY: z.string().min(1),
     MAILGUN_DOMAIN: z.string().min(1),
     EMAIL_CONFIRM_TOKEN: z.string().min(1),
+    PASSWORD_RESET_EMAIL_TOKEN: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {
@@ -101,7 +102,7 @@ export const emailSchema = z
     }
   );
 
-const passwordSchema = z
+export const passwordSchema = z
   .string()
   .min(8, "Password must contain at least 8 characters")
   .max(50, "Password must contain at most 50 characters")

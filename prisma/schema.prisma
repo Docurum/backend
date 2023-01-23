@@ -41,3 +41,16 @@ model Doctor {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model emailTokens {
+  id        String        @id @default(cuid())
+  category  emailCategory
+  token     String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum emailCategory {
+  VERIFYMAIL
+  RESETPASSWORD
+}

@@ -22,10 +22,16 @@ const registerController = {
       const { id, username } = await prisma.user.create({ data });
       try {
         const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_TOKEN);
+        const userToken = await prisma.emailTokens.create({
+          data: {
+            category: "VERIFYMAIL",
+            token: linkToken,
+          },
+        });
         const replacements = {
           name: resp.name,
           email: resp.email,
-          link: config.FRONTEND_URL + "/email-confirm/" + linkToken,
+          link: config.FRONTEND_URL + "/email-confirm/" + userToken.id,
           year: new Date().getFullYear(),
         };
         const ans = await sendVerifyMail(replacements, resp.email);

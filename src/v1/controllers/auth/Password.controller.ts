@@ -90,7 +90,7 @@ const passwordController = {
       if (currPasswordMatched) {
         throw new ZodError([{ code: z.ZodIssueCode.custom, path: ["password"], message: "New Password cannot be the same as your Current Password" }]);
       }
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, config.PASSWORD_SALT_ROUNDS);
       await prisma.user.update({
         where: {
           id: aud,

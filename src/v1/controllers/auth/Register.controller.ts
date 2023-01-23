@@ -16,8 +16,7 @@ const registerController = {
       const resp = await registerSchema.parseAsync(req.body);
       type respType = Omit<registerRequestBodyType, "confirmPassword"> & Partial<Pick<registerRequestBodyType, "confirmPassword">>;
       delete (resp as respType).confirmPassword;
-      /* Hash the password with 10 salt rounds */
-      const hashedPassword = await bcrypt.hash(resp.password, 10);
+      const hashedPassword = await bcrypt.hash(resp.password, config.PASSWORD_SALT_ROUNDS);
       const data: respType = { ...(resp as respType), password: hashedPassword };
       const { id, username } = await prisma.user.create({ data });
       try {

@@ -95,6 +95,11 @@ const passwordController = {
           password: hashedPassword,
         },
       });
+      await prisma.emailTokens.delete({
+        where: {
+          id: token,
+        },
+      });
       res.send(customResponse(200, "Password Updated Successfully"));
     } catch (err: any) {
       if (err instanceof ZodError) {

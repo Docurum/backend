@@ -69,7 +69,7 @@ const passwordController = {
   },
   async reset(req: Request<{}, {}, passwordResetBodyType>, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { token, password } = await passwordResetSchema.parseAsync(req.params);
+      const { token, password } = await passwordResetSchema.parseAsync(req.body);
       const userToken = await prisma.emailTokens.findUniqueOrThrow({
         where: {
           id: token,
@@ -86,6 +86,10 @@ const passwordController = {
       });
       const secretKey = config.PASSWORD_RESET_EMAIL_TOKEN + user.password;
       JWTService.verify(userToken.token, aud, secretKey);
+      const prevPassMatched = await bcrypt.compare(password, user.password);
+      if (prevPassMatched) {
+        throw new ZodError([{ code: z.ZodIssueCode.custom, path: ["password"], message: "New Password cannot be the same as your Current Password" }]);
+      }
       const hashedPassword = await bcrypt.hash(password, 10);
       await prisma.user.update({
         where: {
@@ -95,13 +99,18 @@ const passwordController = {
           password: hashedPassword,
         },
       });
-      await prisma.emailTokens.delete({
-        where: {
-          id: token,
-        },
-      });
+      try {
+        await prisma.emailTokens.delete({
+          where: {
+            id: token,
+          },
+        });
+      } catch (err: any) {
+        console.log("Cannot delete email token: " + token);
+      }
       res.send(customResponse(200, "Password Updated Successfully"));
     } catch (err: any) {
+      console.log(err);
       if (err instanceof ZodError) {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }

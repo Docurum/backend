@@ -57,11 +57,15 @@ const emailController = {
           isEmailVerified: true,
         },
       });
-      await prisma.emailTokens.delete({
-        where: {
-          id: token,
-        },
-      });
+      try {
+        await prisma.emailTokens.delete({
+          where: {
+            id: token,
+          },
+        });
+      } catch (err: any) {
+        console.log("Cannot delete email token: " + token);
+      }
       res.send(customResponse(200, "Your email has been successfully verified !"));
     } catch (err: any) {
       if (err instanceof ZodError) {

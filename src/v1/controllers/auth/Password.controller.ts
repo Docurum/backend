@@ -86,8 +86,8 @@ const passwordController = {
       });
       const secretKey = config.PASSWORD_RESET_EMAIL_TOKEN + user.password;
       JWTService.verify(userToken.token, aud, secretKey);
-      const prevPassMatched = await bcrypt.compare(password, user.password);
-      if (prevPassMatched) {
+      const currPasswordMatched = await bcrypt.compare(password, user.password);
+      if (currPasswordMatched) {
         throw new ZodError([{ code: z.ZodIssueCode.custom, path: ["password"], message: "New Password cannot be the same as your Current Password" }]);
       }
       const hashedPassword = await bcrypt.hash(password, 10);

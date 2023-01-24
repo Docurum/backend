@@ -9,8 +9,8 @@
     "build": "npx tsc && copyfiles -u 1 src/public/* build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
-    "upgradeTestEnv": "node src/env/upgradeTest.js",
-    "downgradeTestEnv": "node src/env/downgradeTest.js",
+    "upgradeTestEnv": "npx ts-node src/env/upgradeTest.ts",
+    "downgradeTestEnv": "npx ts-node src/env/downgradeTest.ts",
     "test": "npm run upgradeTestEnv && npm run prisma:migrate && jest --watchAll",
     "prisma:migrate": "npx prisma migrate dev",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"

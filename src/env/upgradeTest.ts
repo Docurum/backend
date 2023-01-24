@@ -1,4 +1,7 @@
 import { promises as fs } from "fs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const setEnvValue = async (key: string, value: string): Promise<void> => {
   // read file from hdd & split if from a linebreak to a array
@@ -13,5 +16,7 @@ const setEnvValue = async (key: string, value: string): Promise<void> => {
   console.log(`Updated ${key} to ${value}`);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises, no-template-curly-in-string
-setEnvValue("DATABASE_URL", "${TEST_DB_URL}");
+if (process.env.ENV === "development") {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises, no-template-curly-in-string
+  setEnvValue("DATABASE_URL", "${TEST_DB_URL}");
+}

@@ -1,4 +1,5 @@
-import "module-alias/register";
+// TODO: uncomment this during build
+// import "module-alias/register";
 import app from "@src/app";
 import { envSchema } from "@v1/schemas";
 import { ZodError } from "zod";

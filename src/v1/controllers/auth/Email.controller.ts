@@ -72,9 +72,18 @@ const emailController = {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }
       if (err instanceof TokenExpiredError) {
+        try {
+          await prisma.emailTokens.delete({
+            where: {
+              id: req.params.token,
+            },
+          });
+        } catch (err: any) {
+          console.log("Cannot delete email token: " + req.params.token);
+        }
         return next({ status: createError.InternalServerError().status, message: "Your email verification link has been expired !" });
       }
-      return next({ status: createError.InternalServerError().status, message: "Please ensure that the email verification link is correct !" });
+      return next({ status: createError.InternalServerError().status, message: "Please ensure that the email verification link is correct and not expired !" });
     }
   },
   async sendForgotPasswordMail(req: Request<{}, {}, forgotPasswordEmailBodyType>, res: Response, next: NextFunction): Promise<void> {

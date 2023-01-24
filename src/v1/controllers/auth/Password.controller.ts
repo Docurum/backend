@@ -62,9 +62,18 @@ const passwordController = {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }
       if (err instanceof TokenExpiredError) {
+        try {
+          await prisma.emailTokens.delete({
+            where: {
+              id: req.params.token,
+            },
+          });
+        } catch (err: any) {
+          console.log("Cannot delete email token: " + req.params.token);
+        }
         return next({ status: createError.InternalServerError().status, message: "Your password reset link has been expired !" });
       }
-      return next({ status: createError.InternalServerError().status, message: "Please ensure that the password reset link is correct !" });
+      return next({ status: createError.InternalServerError().status, message: "Please ensure that the password reset link is correct and not expired !" });
     }
   },
   async reset(req: Request<{}, {}, passwordResetBodyType>, res: Response, next: NextFunction): Promise<void> {
@@ -76,7 +85,7 @@ const passwordController = {
         },
       });
       if (userToken.category !== "RESETPASSWORD") {
-        throw new Error("Please ensure that the password reset link is correct !");
+        throw new Error("Please ensure that the password reset link is correct and not expired !");
       }
       const { aud } = JWTService.decode(userToken.token) as { aud: string };
       const user = await prisma.user.findUniqueOrThrow({
@@ -115,9 +124,18 @@ const passwordController = {
         return next({ status: createError.InternalServerError().status, message: err.issues });
       }
       if (err instanceof TokenExpiredError) {
+        try {
+          await prisma.emailTokens.delete({
+            where: {
+              id: req.body.token,
+            },
+          });
+        } catch (err: any) {
+          console.log("Cannot delete email token: " + req.body.token);
+        }
         return next({ status: createError.InternalServerError().status, message: "Your password reset link has been expired !" });
       }
-      return next({ status: createError.InternalServerError().status, message: "Please ensure that the password reset link is correct !" });
+      return next({ status: createError.InternalServerError().status, message: "Please ensure that the password reset link is correct and not expired !" });
     }
   },
 };

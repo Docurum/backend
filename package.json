@@ -17,7 +17,8 @@
     "upgradeTestEnv": "npx ts-node src/env/upgradeTest.ts",
     "downgradeTestEnv": "npx ts-node src/env/downgradeTest.ts",
     "test": "npm run upgradeTestEnv && npm run prisma:migrate && jest --watchAll",
-    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:migrate-dev": "npx prisma migrate dev",
+    "prisma:migrate-prod": "npx prisma migrate deploy",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
   "keywords": [],

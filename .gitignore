@@ -3,4 +3,4 @@ node_modules
 build
 
 # Might remove later
-prisma/migrations
+# prisma/migrations

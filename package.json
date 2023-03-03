@@ -8,7 +8,7 @@
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "node build/server.js",
+    "start": "node -r module-alias/register build/server.js",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "npx ts-node --transpile-only --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
@@ -17,7 +17,8 @@
     "upgradeTestEnv": "npx ts-node src/env/upgradeTest.ts",
     "downgradeTestEnv": "npx ts-node src/env/downgradeTest.ts",
     "test": "npm run upgradeTestEnv && npm run prisma:migrate && jest --watchAll",
-    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:migrate-dev": "npx prisma migrate dev",
+    "prisma:migrate-prod": "npx prisma migrate deploy",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
   "keywords": [],

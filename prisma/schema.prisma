@@ -22,6 +22,8 @@ model User {
   doctor          Doctor?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  Topic           Topic[]
+  Comment         Comment?
 }
 
 model Doctor {
@@ -48,6 +50,53 @@ model emailTokens {
   token     String        @unique
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String
+  topic       Topic    @relation(fields: [topicId], references: [id])
+  topicId     String
+  Comment     Comment? @relation(fields: [commentId], references: [id])
+  commentId   String?
+}
+
+model Comment {
+  id          String     @id @default(cuid())
+  description Json
+  upvotes     Int        @default(0)
+  downvotes   Int        @default(0)
+  views       Int        @default(0)
+  shares      Int        @default(0)
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String     @unique
+  assetUrl    String[]
+  topic       Topic      @relation(fields: [topicId], references: [id])
+  topicId     String     @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Category    Category[]
+}
+
+model Topic {
+  id            String     @id @default(cuid())
+  title         String
+  description   Json
+  upvotes       Int        @default(0)
+  downvotes     Int        @default(0)
+  views         Int        @default(0)
+  shares        Int        @default(0)
+  commentCount  Int        @default(0)
+  user          User       @relation(fields: [userId], references: [id])
+  userId        String     @unique
+  assetUrl      String[]
+  commentIdList String[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  Category      Category[]
+  Comment       Comment[]
 }
 
 enum emailCategory {

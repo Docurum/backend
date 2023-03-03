@@ -12,7 +12,7 @@ import "@v1/config/env.config";
 
 import config from "@v1/config";
 import { defaultMiddleware } from "@v1/middlewares";
-import { authRoutes } from "@v1/routes";
+import { authRoutes, forumRoutes } from "@v1/routes";
 
 // RateLimitter
 const limiter = rateLimit({
@@ -56,6 +56,7 @@ const apiVersion: string = "v1";
 
 // Routes
 app.use(`/${apiVersion}/auth`, authRoutes);
+app.use(`/${apiVersion}/forum`, forumRoutes);
 
 // 404 Handler
 app.use((_req: Request, _res: Response, next: NextFunction) => {

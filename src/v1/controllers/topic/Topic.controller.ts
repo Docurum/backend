@@ -4,8 +4,9 @@ import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 
 const topicController = {
-  async register(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async createTopic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
+      console.log(req.user);
       console.log(req.body);
       const data = req.body;
       const topic = await prisma.topic.create({ data });

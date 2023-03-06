@@ -21,6 +21,8 @@ export const envSchema = z
     EMAIL_CONFIRM_TOKEN: z.string().min(1),
     PASSWORD_RESET_EMAIL_TOKEN: z.string().min(1),
     PASSWORD_SALT_ROUNDS: z.number().default(10),
+    USER_ACCESS_TOKEN: z.string().min(1),
+    USER_REFRESH_TOKEN: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

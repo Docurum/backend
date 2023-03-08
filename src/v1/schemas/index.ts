@@ -18,11 +18,11 @@ export const envSchema = z
     GMAIL_ACCOUNT: z.string().min(1),
     MAILGUN_API_KEY: z.string().min(1),
     MAILGUN_DOMAIN: z.string().min(1),
-    EMAIL_CONFIRM_TOKEN: z.string().min(1),
-    PASSWORD_RESET_EMAIL_TOKEN: z.string().min(1),
+    EMAIL_CONFIRM_SECRET: z.string().min(1),
+    PASSWORD_RESET_EMAIL_SECRET: z.string().min(1),
     PASSWORD_SALT_ROUNDS: z.number().default(10),
-    USER_ACCESS_TOKEN: z.string().min(1),
-    USER_REFRESH_TOKEN: z.string().min(1),
+    USER_ACCESS_SECRET: z.string().min(1),
+    USER_REFRESH_SECRET: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

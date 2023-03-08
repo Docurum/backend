@@ -39,7 +39,7 @@ const emailController = {
         throw new Error("Please ensure that the email verification link is correct !");
       }
       const { aud } = JWTService.decode(userToken.token) as { aud: string };
-      const { id } = JWTService.verify(userToken.token, aud, config.EMAIL_CONFIRM_TOKEN) as { id: string };
+      const { id } = JWTService.verify(userToken.token, aud, config.EMAIL_CONFIRM_SECRET) as { id: string };
       const { isEmailVerified } = await prisma.user.findUniqueOrThrow({
         where: {
           id,
@@ -95,7 +95,7 @@ const emailController = {
         },
       });
       try {
-        const secretKey = config.PASSWORD_RESET_EMAIL_TOKEN + user.password;
+        const secretKey = config.PASSWORD_RESET_EMAIL_SECRET + user.password;
         const linkToken = JWTService.sign({ id: user.id, username: user.username }, user.id, "20m", secretKey);
         const userToken = await prisma.emailTokens.create({
           data: {

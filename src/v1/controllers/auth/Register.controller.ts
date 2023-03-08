@@ -20,7 +20,7 @@ const registerController = {
       const data: respType = { ...(resp as respType), password: hashedPassword };
       const { id, username } = await prisma.user.create({ data });
       try {
-        const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_TOKEN);
+        const linkToken = JWTService.sign({ id, username }, id, "24h", config.EMAIL_CONFIRM_SECRET);
         const userToken = await prisma.emailTokens.create({
           data: {
             category: "VERIFYMAIL",

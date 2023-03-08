@@ -15,7 +15,7 @@ const loginController = {
       const refreshTokenSchema = z.string().min(1, "Refresh Token is missing");
       const sanitizedRefreshToken = await refreshTokenSchema.parseAsync(refreshTokenFromCookie);
       const { id } = (await JWTService.decode(sanitizedRefreshToken)) as { id: string };
-      await JWTService.verify(sanitizedRefreshToken, id, config.USER_REFRESH_TOKEN);
+      await JWTService.verify(sanitizedRefreshToken, id, config.USER_REFRESH_SECRET);
       const refreshTokenExists = await prisma.user.findMany({
         where: {
           AND: [
@@ -55,8 +55,8 @@ const loginController = {
       } catch (err: any) {
         console.log("Unable to delete Refresh Token");
       }
-      const accessToken = JWTService.sign(refreshTokenExists[0], id, "30m", config.USER_ACCESS_TOKEN);
-      const refreshToken = JWTService.sign(refreshTokenExists[0], id, "12h", config.USER_REFRESH_TOKEN);
+      const accessToken = JWTService.sign(refreshTokenExists[0], id, "30m", config.USER_ACCESS_SECRET);
+      const refreshToken = JWTService.sign(refreshTokenExists[0], id, "12h", config.USER_REFRESH_SECRET);
       await prisma.refreshTokens.create({
         data: {
           token: refreshToken,

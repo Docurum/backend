@@ -54,7 +54,7 @@ const passwordController = {
           id: aud,
         },
       });
-      const secretKey = config.PASSWORD_RESET_EMAIL_TOKEN + user.password;
+      const secretKey = config.PASSWORD_RESET_EMAIL_SECRET + user.password;
       JWTService.verify(userToken.token, aud, secretKey);
       res.send(customResponse(200, "OK"));
     } catch (err: any) {
@@ -93,7 +93,7 @@ const passwordController = {
           id: aud,
         },
       });
-      const secretKey = config.PASSWORD_RESET_EMAIL_TOKEN + user.password;
+      const secretKey = config.PASSWORD_RESET_EMAIL_SECRET + user.password;
       JWTService.verify(userToken.token, aud, secretKey);
       const currPasswordMatched = await bcrypt.compare(password, user.password);
       if (currPasswordMatched) {

@@ -14,7 +14,7 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction):
   try {
     const { audience } = JWTService.decode(token) as { audience: string };
     // Checks the validity of the "Token"
-    const { id } = (await JWTService.verify(token, audience, config.USER_ACCESS_SECRET)) as { id: string };
+    const { id } = JWTService.verify(token, audience, config.USER_ACCESS_SECRET) as { id: string };
     //  Check if the user exists in DB
     const user = await prisma.user.findUniqueOrThrow({
       where: {

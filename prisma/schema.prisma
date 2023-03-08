@@ -39,7 +39,7 @@ model Doctor {
   languages     String[]
   contact       String?  @unique
   hospital      String?
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -60,7 +60,7 @@ enum emailCategory {
 
 model refreshTokens {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   token     String   @unique
   createdAt DateTime @default(now())
@@ -72,7 +72,7 @@ model Category {
   name        String
   description String
   imageUrl    String
-  topic       Topic    @relation(fields: [topicId], references: [id])
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
   topicId     String
   Comment     Comment? @relation(fields: [commentId], references: [id])
   commentId   String?
@@ -85,10 +85,10 @@ model Comment {
   downvotes   Int        @default(0)
   views       Int        @default(0)
   shares      Int        @default(0)
-  user        User       @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String     @unique
   assetUrl    String[]
-  topic       Topic      @relation(fields: [topicId], references: [id])
+  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
   topicId     String     @unique
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -104,7 +104,7 @@ model Topic {
   views         Int        @default(0)
   shares        Int        @default(0)
   commentCount  Int        @default(0)
-  user          User       @relation(fields: [userId], references: [id])
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String     @unique
   assetUrl      String[]
   commentIdList String[]

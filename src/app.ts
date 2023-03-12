@@ -11,7 +11,7 @@ import xss from "xss-clean";
 import "@v1/config/env.config";
 
 import config from "@v1/config";
-import { defaultMiddleware } from "@v1/middlewares";
+// import { authMiddleware } from "@v1/middlewares";
 import { authRoutes, forumRoutes } from "@v1/routes";
 
 // RateLimitter
@@ -45,7 +45,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
-app.use(defaultMiddleware);
+// app.use(authMiddleware);
 
 // Welcome Route
 app.all("/", (_req: Request, res: Response, _next: NextFunction) => {

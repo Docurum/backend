@@ -13,7 +13,9 @@ type registerRequestBodyType = z.infer<typeof registerSchema>;
 const registerController = {
   async register(req: Request<{}, {}, registerRequestBodyType>, res: Response, next: NextFunction): Promise<void> {
     try {
+      console.log(req.body);
       const resp = await registerSchema.parseAsync(req.body);
+      console.log(req.body);
       type respType = Omit<registerRequestBodyType, "confirmPassword"> & Partial<Pick<registerRequestBodyType, "confirmPassword">>;
       delete (resp as respType).confirmPassword;
       const hashedPassword = await bcrypt.hash(resp.password, config.PASSWORD_SALT_ROUNDS);

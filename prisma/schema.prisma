@@ -23,7 +23,7 @@ model User {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   Topic           Topic[]
-  Comment         Comment?
+  Comment         Comment[]
   refreshToken    refreshTokens[]
 }
 
@@ -86,7 +86,7 @@ model Comment {
   views       Int        @default(0)
   shares      Int        @default(0)
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String     @unique
+  userId      String
   assetUrl    String[]
   topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
   topicId     String     @unique
@@ -105,7 +105,7 @@ model Topic {
   shares        Int        @default(0)
   commentCount  Int        @default(0)
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String     @unique
+  userId        String
   assetUrl      String[]
   commentIdList String[]
   createdAt     DateTime   @default(now())

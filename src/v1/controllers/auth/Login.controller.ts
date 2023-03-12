@@ -91,9 +91,10 @@ const loginController = {
       if (!isPasswordMatch) {
         return next(createError.Unauthorized("Verify your Credentials"));
       }
+      const Pass = user.password;
       delete (user as Partial<typeof user>).password;
-      const accessToken = JWTService.sign(user, user.id, "30m", config.USER_ACCESS_SECRET);
-      const refreshToken = JWTService.sign(user, user.id, "12h", config.USER_REFRESH_SECRET);
+      const accessToken = JWTService.sign(user, user.id, "30m", config.USER_ACCESS_SECRET + Pass);
+      const refreshToken = JWTService.sign(user, user.id, "12h", config.USER_REFRESH_SECRET + Pass);
       await prisma.refreshTokens.create({
         data: {
           token: refreshToken,
@@ -141,6 +142,7 @@ const loginController = {
           name: true,
           username: true,
           email: true,
+          password: true,
           isEmailVerified: true,
           isAdmin: true,
           picture: true,
@@ -153,6 +155,8 @@ const loginController = {
       if (refreshTokenExists.length !== 1) {
         return next(createError.Unauthorized("Refresh Token is Invalid"));
       }
+      const Pass = refreshTokenExists[0].password;
+      delete (refreshTokenExists[0] as Partial<typeof refreshTokenExists[0]>).password;
       try {
         await prisma.refreshTokens.delete({
           where: {
@@ -162,8 +166,8 @@ const loginController = {
       } catch (err: any) {
         console.log("Unable to delete Refresh Token");
       }
-      const accessToken = JWTService.sign(refreshTokenExists[0], id, "30m", config.USER_ACCESS_SECRET);
-      const refreshToken = JWTService.sign(refreshTokenExists[0], id, "12h", config.USER_REFRESH_SECRET);
+      const accessToken = JWTService.sign(refreshTokenExists[0], id, "30m", config.USER_ACCESS_SECRET + Pass);
+      const refreshToken = JWTService.sign(refreshTokenExists[0], id, "12h", config.USER_REFRESH_SECRET + Pass);
       await prisma.refreshTokens.create({
         data: {
           token: refreshToken,

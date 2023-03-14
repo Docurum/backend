@@ -22,6 +22,7 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction):
         id: userId,
       },
     });
+    console.log("Password: ", user.password);
     JWTService.verify(token, userId, config.USER_ACCESS_SECRET + user.password) as { id: string };
     if (user.blocked) {
       return next(createError.Unauthorized("Your account has been blocked"));

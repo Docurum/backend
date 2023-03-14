@@ -28,21 +28,27 @@ model User {
 }
 
 model Doctor {
-  id            String   @id @default(cuid())
-  uuid          String   @unique
-  isVerified    Boolean  @default(false)
-  biography     String?
-  qualification String
-  title         String
-  speciality    String[]
-  experience    Int      @default(0)
-  languages     String[]
-  contact       String?  @unique
-  hospital      String?
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                      String   @id @default(cuid())
+  uuid                    String   @unique
+  isVerified              Boolean  @default(false)
+  medicalCouncil          String?
+  registrationNumber      String?
+  registrationYear        String?
+  photoId                 String? // photoId for verification
+  registrationCertificate String? //Registration Council Certificate
+  degreeCertificate       String? //Highest Degree / Diploma certificate
+  biography               String?
+  qualification           String
+  title                   String
+  speciality              String[]
+  experience              Int      @default(0)
+  languages               String[]
+  contact                 String?  @unique
+  hospital                String?
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String   @unique
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }
 
 model emailTokens {

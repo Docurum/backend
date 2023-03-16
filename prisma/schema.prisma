@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(cuid())
-  name            String
-  username        String          @unique
-  email           String          @unique
-  password        String
-  isEmailVerified Boolean         @default(false)
-  isAdmin         Boolean         @default(false)
-  picture         String?
-  dob             DateTime?
-  blocked         Boolean         @default(false)
-  isDoctor        Boolean         @default(false)
-  doctor          Doctor?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  Topic           Topic[]
-  Comment         Comment[]
-  refreshToken    refreshTokens[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  username             String                 @unique
+  email                String                 @unique
+  password             String
+  isEmailVerified      Boolean                @default(false)
+  isAdmin              Boolean                @default(false)
+  picture              String?
+  dob                  DateTime?
+  blocked              Boolean                @default(false)
+  isDoctor             Boolean                @default(false)
+  doctor               Doctor?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  Topic                Topic[]
+  Comment              Comment[]
+  refreshToken         refreshTokens[]
+  CategoriesOnTopics   CategoriesOnTopics[]
+  CategoriesOnComments CategoriesOnComments[]
 }
 
 model Doctor {
@@ -74,48 +76,70 @@ model refreshTokens {
 }
 
 model Category {
-  id          String   @id @default(cuid())
+  id          String                 @id @default(cuid())
   name        String
   description String
   imageUrl    String
-  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  topicId     String
-  Comment     Comment? @relation(fields: [commentId], references: [id])
-  commentId   String?
+  topics      CategoriesOnTopics[]
+  Comments    CategoriesOnComments[]
+}
+
+model CategoriesOnTopics {
+  topic      Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topicId    String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [assignedBy], references: [id], onDelete: Cascade)
+  assignedBy String
+
+  @@id([topicId, categoryId])
+}
+
+model CategoriesOnComments {
+  comment    Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId  String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [assignedBy], references: [id], onDelete: Cascade)
+  assignedBy String
+
+  @@id([commentId, categoryId])
 }
 
 model Comment {
-  id          String     @id @default(cuid())
+  id          String                 @id @default(cuid())
   description Json
-  upvotes     Int        @default(0)
-  downvotes   Int        @default(0)
-  views       Int        @default(0)
-  shares      Int        @default(0)
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  upvotes     Int?                   @default(0)
+  downvotes   Int?                   @default(0)
+  views       Int?                   @default(0)
+  shares      Int?                   @default(0)
+  user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   assetUrl    String[]
-  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  topicId     String     @unique
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  Category    Category[]
+  topic       Topic?                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topicId     String
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  categories  CategoriesOnComments[]
+  categoryId  String
 }
 
 model Topic {
-  id            String     @id @default(cuid())
-  title         String
-  description   Json
-  upvotes       Int        @default(0)
-  downvotes     Int        @default(0)
-  views         Int        @default(0)
-  shares        Int        @default(0)
-  commentCount  Int        @default(0)
-  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
-  assetUrl      String[]
-  commentIdList String[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  Category      Category[]
-  Comment       Comment[]
+  id           String               @id @default(cuid())
+  title        String
+  description  Json
+  upvotes      Int?                 @default(0)
+  downvotes    Int?                 @default(0)
+  views        Int?                 @default(0)
+  shares       Int?                 @default(0)
+  commentCount Int?                 @default(0)
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  assetUrl     String[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  categories   CategoriesOnTopics[]
+  comments     Comment[]
 }

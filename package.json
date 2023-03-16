@@ -25,6 +25,7 @@
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.0",
     "@prisma/client": "^4.8.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",

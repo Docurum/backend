@@ -93,8 +93,13 @@ const loginController = {
       }
       const Pass = user.password;
       delete (user as Partial<typeof user>).password;
-      const accessToken = JWTService.sign(user, user.id, "30m", config.USER_ACCESS_SECRET + Pass);
-      const refreshToken = JWTService.sign(user, user.id, "12h", config.USER_REFRESH_SECRET + Pass);
+      delete (user as Partial<typeof user>).email;
+      const jwtPayload = {
+        id: user.id,
+        username: user.username,
+      };
+      const accessToken = JWTService.sign(jwtPayload, user.id, "12h", config.USER_ACCESS_SECRET + Pass);
+      const refreshToken = JWTService.sign(jwtPayload, user.id, "24h", config.USER_REFRESH_SECRET + Pass);
       await prisma.refreshTokens.create({
         data: {
           token: refreshToken,
@@ -166,8 +171,12 @@ const loginController = {
       } catch (err: any) {
         console.log("Unable to delete Refresh Token");
       }
-      const accessToken = JWTService.sign(refreshTokenExists[0], id, "30m", config.USER_ACCESS_SECRET + Pass);
-      const refreshToken = JWTService.sign(refreshTokenExists[0], id, "12h", config.USER_REFRESH_SECRET + Pass);
+      const jwtPayload = {
+        id: refreshTokenExists[0].id,
+        username: refreshTokenExists[0].username,
+      };
+      const accessToken = JWTService.sign(jwtPayload, id, "12h", config.USER_ACCESS_SECRET + Pass);
+      const refreshToken = JWTService.sign(jwtPayload, id, "24h", config.USER_REFRESH_SECRET + Pass);
       await prisma.refreshTokens.create({
         data: {
           token: refreshToken,

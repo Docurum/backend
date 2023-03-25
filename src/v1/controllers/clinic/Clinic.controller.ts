@@ -31,12 +31,48 @@ const clinicController = {
         ...resp,
         adminId: admins,
       };
-      const topic = await prisma.clinic.create({ data });
-      res.json(
-        customResponse(201, {
-          topic,
-        })
-      );
+      await prisma.clinic.create({ data });
+      res.json(customResponse(201, "Clinic created successfully 👌"));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const adminId = req.user?.id as string;
+      const clinics = await prisma.clinic.findMany({
+        where: {
+          adminId: {
+            equals: adminId,
+          },
+        },
+      });
+      res.json(customResponse(200, clinics));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async deleteClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const clinicId = req.params.id;
+      const userId = req.user?.id as string;
+      const clinic = await prisma.clinic.findUniqueOrThrow({
+        where: {
+          id: clinicId,
+        },
+      });
+      if (clinic.adminId.includes(userId)) {
+        await prisma.clinic.delete({
+          where: {
+            id: clinic.id,
+          },
+        });
+        res.json(customResponse(200, "Successfully deleted the clinic ✅"));
+      } else if (!clinic.adminId.includes(userId)) {
+        throw new Error();
+      }
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

@@ -15,14 +15,14 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction):
   try {
     const User = JWTService.decode(token) as JwtPayload;
     const userId = User?.id;
-    console.log("payload:", JWTService.decode(token));
+    // console.log("payload:", JWTService.decode(token));
     //  Check if the user exists in DB
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         id: userId,
       },
     });
-    console.log("Password: ", user.password);
+    // console.log("Password: ", user.password);
     JWTService.verify(token, userId, config.USER_ACCESS_SECRET + user.password) as { id: string };
     if (user.blocked) {
       return next(createError.Unauthorized("Your account has been blocked"));
@@ -30,7 +30,7 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction):
     req.user = user;
     next();
   } catch (err) {
-    console.log("Middleware:", err);
+    // console.log("Middleware:", err);
     return next(createError.Unauthorized());
   }
 };

@@ -38,6 +38,37 @@ const clinicController = {
       return next({ status: createError.InternalServerError().status, message: err });
     }
   },
+
+  async editClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+
+    try {
+      const resp=await clinicSchema.parseAsync(req.body);
+      const clinicId = req.params.id;
+      const userId = req.user?.id as string;
+      const clinic = await prisma.clinic.findUniqueOrThrow({
+        where: {
+          id: clinicId,
+        },
+      });
+      if (clinic.adminId.includes(userId)) {
+        const data = {
+          ...resp,
+        };
+        await prisma.clinic.update({
+          where: {
+            id: clinic.id,
+          },
+          data,
+        });
+        res.json(customResponse(200, "Successfully updated the clinic ✅"));
+      } else if (!clinic.adminId.includes(userId)) {  
+        throw new Error();
+      }
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
   async getClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const adminId = req.user?.id as string;

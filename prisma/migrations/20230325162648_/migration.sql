@@ -16,6 +16,7 @@ CREATE TABLE "User" (
     "isDoctor" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "clinicId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -74,6 +75,8 @@ CREATE TABLE "Category" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "imageUrl" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -84,6 +87,8 @@ CREATE TABLE "CategoriesOnTopics" (
     "categoryId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "assignedBy" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "CategoriesOnTopics_pkey" PRIMARY KEY ("topicId","categoryId")
 );
@@ -94,6 +99,8 @@ CREATE TABLE "CategoriesOnComments" (
     "categoryId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "assignedBy" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "CategoriesOnComments_pkey" PRIMARY KEY ("commentId","categoryId")
 );
@@ -134,6 +141,31 @@ CREATE TABLE "Topic" (
     CONSTRAINT "Topic_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Clinic" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "phoneNumber" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "website" TEXT,
+    "type" TEXT NOT NULL,
+    "registrationNumber" TEXT,
+    "certificate" TEXT,
+    "address" TEXT NOT NULL,
+    "pincode" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "services" TEXT[],
+    "logo" TEXT,
+    "displayImages" TEXT[],
+    "adminId" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Clinic_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
@@ -154,6 +186,9 @@ CREATE UNIQUE INDEX "emailTokens_token_key" ON "emailTokens"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "refreshTokens_token_key" ON "refreshTokens"("token");
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_clinicId_fkey" FOREIGN KEY ("clinicId") REFERENCES "Clinic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Doctor" ADD CONSTRAINT "Doctor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

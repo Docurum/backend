@@ -79,9 +79,11 @@ model refreshTokens {
 
 model Category {
   id          String                 @id @default(cuid())
-  name        String
-  description String
-  imageUrl    String
+  name        String                 @unique
+  description String?
+  imageUrl    String?
+  animation   Json?
+  color       String?
   topics      CategoriesOnTopics[]
   Comments    CategoriesOnComments[]
   createdAt   DateTime               @default(now())
@@ -119,10 +121,10 @@ model CategoriesOnComments {
 model Comment {
   id          String                 @id @default(cuid())
   description Json
-  upvotes     Int?                   @default(0)
-  downvotes   Int?                   @default(0)
-  views       Int?                   @default(0)
-  shares      Int?                   @default(0)
+  upvotes     String[]
+  downvotes   String[]
+  views       String[]
+  shares      String[]
   user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   assetUrl    String[]
@@ -138,11 +140,11 @@ model Topic {
   id           String               @id @default(cuid())
   title        String
   description  Json
-  upvotes      Int?                 @default(0)
-  downvotes    Int?                 @default(0)
-  views        Int?                 @default(0)
-  shares       Int?                 @default(0)
-  commentCount Int?                 @default(0)
+  upvotes      String[]
+  downvotes    String[]
+  views        String[]
+  shares       String[]
+  commentCount String[]
   user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
   assetUrl     String[]

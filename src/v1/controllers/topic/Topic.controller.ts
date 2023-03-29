@@ -1,8 +1,9 @@
 import prisma from "@src/prisma";
+import { categoryNameSchema } from "@src/v1/schemas";
 import { customResponse } from "@src/v1/utils/Response.util";
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 
 const topicSchema = z.object({
   title: z.string(),
@@ -10,13 +11,21 @@ const topicSchema = z.object({
   assetUrl: z.string().array(),
 });
 
-const categorySchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  imageUrl: z.string(),
-  animation: z.object({}),
-  color: z.string(),
-});
+const categorySchema = z
+  .object({
+    name: z.string(),
+    imageUrl: z.string(),
+    color: z.string(),
+  })
+  .strict();
+
+const categorynameExistsSchema = z
+  .object({
+    name: categoryNameSchema,
+  })
+  .strict();
+
+type categoryRequestBodyType = z.infer<typeof categorynameExistsSchema>;
 
 const topicController = {
   async createTopic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
@@ -92,6 +101,18 @@ const topicController = {
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async categoryExists(req: Request<{}, {}, categoryRequestBodyType>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await categorynameExistsSchema.parseAsync(req.body);
+      res.send(customResponse(200, "OK"));
+    } catch (err) {
+      console.log("Error: ", err);
+      if (err instanceof ZodError) {
+        return next({ status: createError.InternalServerError().status, message: err.issues });
+      }
+      return next(createError.InternalServerError());
     }
   },
 };

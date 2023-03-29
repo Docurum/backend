@@ -81,6 +81,32 @@ export const usernameSchema = z
     }
   );
 
+export const categoryNameSchema = z
+  .string()
+  .min(4, "Category must contain at least 3 characters")
+  .max(20, "Username must contain at most 30 characters")
+  // https://stackoverflow.com/questions/12018245/regular-expression-to-validate-username
+  .regex(/^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm, "Only A-Z, a-z, . and _ is allowed in Username")
+  .trim()
+  .transform((name) => name.toLocaleLowerCase())
+  .refine(
+    async (name) => {
+      try {
+        await prisma.category.findUniqueOrThrow({
+          where: {
+            name,
+          },
+        });
+        return false;
+      } catch (err) {
+        return true;
+      }
+    },
+    {
+      message: "Category already exists",
+    }
+  );
+
 export const emailSchema = z
   .string()
   .min(4, "Email must contain at least 4 characters")

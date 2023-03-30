@@ -40,9 +40,8 @@ const clinicController = {
   },
 
   async editClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
-
     try {
-      const resp=await clinicSchema.parseAsync(req.body);
+      const resp = await clinicSchema.parseAsync(req.body);
       const clinicId = req.params.id;
       const userId = req.user?.id as string;
       const clinic = await prisma.clinic.findUniqueOrThrow({
@@ -61,7 +60,7 @@ const clinicController = {
           data,
         });
         res.json(customResponse(200, "Successfully updated the clinic ✅"));
-      } else if (!clinic.adminId.includes(userId)) {  
+      } else if (!clinic.adminId.includes(userId)) {
         throw new Error();
       }
     } catch (err) {
@@ -104,6 +103,20 @@ const clinicController = {
       } else if (!clinic.adminId.includes(userId)) {
         throw new Error();
       }
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getClinicById(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const clinicId = req.params.id;
+      const clinic = await prisma.clinic.findUnique({
+        where: {
+          id: clinicId,
+        },
+      });
+      res.json(customResponse(200, clinic));
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

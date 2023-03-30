@@ -7,8 +7,9 @@ import { z, ZodError } from "zod";
 
 const topicSchema = z.object({
   title: z.string(),
-  description: z.object({}),
+  description: z.any().array(),
   assetUrl: z.string().array(),
+  categories: z.string().array(),
 });
 
 const categorySchema = z
@@ -35,12 +36,88 @@ const topicController = {
         ...resp,
         userId: req.user?.id as string,
       };
-      const topic = await prisma.topic.create({ data });
-      res.json(
-        customResponse(201, {
-          topic,
-        })
-      );
+      await prisma.topic.create({ data });
+      res.json(customResponse(201, "Topic created successfully."));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async searchTopicsByNameAndDescription(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (req.body.name === null) {
+        const topics = await prisma.topic.findMany({
+          take: 10,
+        });
+        res.json(customResponse(200, topics));
+      }
+      const topicName = req.body.name;
+      if (topicName !== null) {
+        const topics = await prisma.topic.findMany({
+          where: {
+            title: {
+              contains: topicName,
+              mode: "insensitive",
+            },
+          },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            assetUrl: true,
+            upvotes: true,
+            downvotes: true,
+            views: true,
+            shares: true,
+            commentCount: true,
+            categories: true,
+            createdAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        });
+        res.json(customResponse(200, topics));
+      }
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getTopicsById(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const topicId = req.params.id;
+      const topic = await prisma.topic.findUniqueOrThrow({
+        where: {
+          id: topicId,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          assetUrl: true,
+          upvotes: true,
+          downvotes: true,
+          views: true,
+          shares: true,
+          commentCount: true,
+          categories: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              picture: true,
+            },
+          },
+        },
+      });
+      res.json(customResponse(200, topic));
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

@@ -43,11 +43,13 @@ const commentController = {
       const upvote = await prisma.upVoteOnComment.findFirst({
         where: {
           commentId,
+          userId: req.user?.id,
         },
       });
       const downvote = await prisma.downVoteOnComment.findFirst({
         where: {
           commentId,
+          userId: req.user?.id,
         },
       });
       if (downvote !== null) {
@@ -106,11 +108,13 @@ const commentController = {
       const upvote = await prisma.upVoteOnComment.findFirst({
         where: {
           commentId,
+          userId: req.user?.id,
         },
       });
       const downvote = await prisma.downVoteOnComment.findFirst({
         where: {
           commentId,
+          userId: req.user?.id,
         },
       });
 

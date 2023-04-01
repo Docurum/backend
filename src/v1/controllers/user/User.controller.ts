@@ -28,25 +28,55 @@ const doctorSchema = z.object({
 const userController = {
   async getUser(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log(req.user);
-      console.log(req.body);
       const data = {
         id: req.user?.id as string,
       };
       const user = await prisma.user.findFirst({
         where: data,
       });
-      res.json(
-        customResponse(200, {
-          user,
-        })
-      );
+      res.json(customResponse(200, user));
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });
     }
   },
-
+  async getUserByUsername(req: Request<{ username: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const username = req.params.username;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          username,
+        },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          picture: true,
+        },
+      });
+      res.json(customResponse(200, user));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getRecommendedUsers(_req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          picture: true,
+        },
+        take: 10,
+      });
+      res.json(customResponse(200, users));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
   async updateProfilePicture(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await pictureSchema.parseAsync(req.body);

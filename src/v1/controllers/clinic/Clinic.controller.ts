@@ -122,6 +122,28 @@ const clinicController = {
       return next({ status: createError.InternalServerError().status, message: err });
     }
   },
+  async getClinicByUsername(req: Request<{ username: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const username = req.params.username;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          username,
+        },
+      });
+      const clinics = await prisma.clinic.findMany({
+        where: {
+          adminId: {
+            equals: user.id,
+          },
+        },
+        take: 10,
+      });
+      res.json(customResponse(200, clinics));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
 };
 
 export default clinicController;

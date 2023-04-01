@@ -6,11 +6,16 @@ import commentController from "../controllers/comment/Comment.controller";
 const router: Router = express.Router();
 
 // topic routes
+
+// auth routes
 router.post("/create-topic", authMiddleware, topicController.createTopic);
 router.post("/search-topics", topicController.searchTopicsByNameAndDescription);
-router.get("/get-topic/:id", topicController.getTopicsById);
 router.get("/upvote-topic/:id", authMiddleware, topicController.upvoteTopic);
 router.get("/downvote-topic/:id", authMiddleware, topicController.downvoteTopic);
+
+// open routes
+router.get("/get-topic/:id", topicController.getTopicsById);
+router.get("/get-topic-by-username/:username", topicController.getTopicByUsername);
 
 // comment routes
 router.post("/create-comment", authMiddleware, commentController.createComment);

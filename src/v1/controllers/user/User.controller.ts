@@ -77,6 +77,34 @@ const userController = {
       return next({ status: createError.InternalServerError().status, message: err });
     }
   },
+
+  async editUser(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const resp = req.body
+      const query = {
+        id: req.user?.id as string,
+      };
+      const user = await prisma.user.findFirst({
+        where: query,
+      });
+      const data = { ...user, dob:resp.dob, username: resp.username, name: resp.name, bio:resp.bio,phoneNumber:resp.phoneNumber };
+      console.log(data)
+      await prisma.user.update({
+        where: query,
+        data,
+      });
+     
+      res.json(
+        customResponse(200,"User updated successfully")
+      );
+    } catch (err) {
+      console.log(err)
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+
+// write a funciton for edit user
+
   async updateProfilePicture(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await pictureSchema.parseAsync(req.body);

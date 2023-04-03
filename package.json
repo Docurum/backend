@@ -8,7 +8,7 @@
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "node -r module-alias/register build/server.js",
+    "start": "npx ts-node --transpile-only --files src/server.ts",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "npx ts-node --transpile-only --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",

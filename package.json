@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "sudo npx ts-node --files src/server.ts",
-    "prestart": "sudo npx tsc && sudo copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
+    "prestart": "./node_modules/.bin/tsc && sudo copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "dev": "sudo npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "sudo npx ts-node --files src/server.ts",
     "build": "sudo npx tsc && sudo copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",

@@ -2,15 +2,16 @@
   "name": "api_starter",
   "version": "1.0.0",
   "description": "API Starter Created by @pinakipb2",
-  "main": "server.ts",
+  "main": "server.js",
   "_moduleAliases": {
     "@src": "build",
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "npx ts-node --transpile-only --files src/server.ts",
+    "start": "npx ts-node --files src/server.ts",
+    "prestart": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
-    "prod": "npx ts-node --transpile-only --files src/server.ts",
+    "prod": "npx ts-node --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
@@ -21,9 +22,9 @@
     "prisma:migrate-prod": "npx prisma migrate deploy",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
-  "engines" : { 
-    "npm" : ">=8.0.0 <9.5.0",
-    "node" : ">=16.0.0 <18.14.2"
+  "engines": {
+    "npm": "<=9.5.0",
+    "node": "<=18.14.2"
   },
   "keywords": [],
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",
@@ -48,7 +49,8 @@
     "nodemailer-mailgun-transport": "^2.1.5",
     "serve-favicon": "^2.5.0",
     "xss-clean": "^0.1.1",
-    "zod": "^3.20.2"
+    "zod": "^3.20.2",
+    "copyfiles": "^2.4.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -65,7 +67,6 @@
     "@types/serve-favicon": "^2.5.3",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "copyfiles": "^2.4.1",
     "eslint": "^8.29.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",

@@ -43,6 +43,179 @@ const topicController = {
       return next({ status: createError.InternalServerError().status, message: err });
     }
   },
+  async getTopicByUsername(req: Request<{ username: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const username = req.params.username;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          username,
+        },
+      });
+      const topics = await prisma.topic.findMany({
+        where: {
+          userId: user.id,
+        },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          assetUrl: true,
+          upvotes: true,
+          downvotes: true,
+          views: true,
+          shares: true,
+          votes: true,
+          commentCount: true,
+          categories: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              picture: true,
+            },
+          },
+        },
+      });
+      res.json(customResponse(200, topics));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async upvoteTopic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const topicId = req.params.id;
+      const upvote = await prisma.upVoteOnTopic.findFirst({
+        where: {
+          topicId,
+          userId: req.user?.id,
+        },
+      });
+      const downvote = await prisma.downVoteOnTopic.findFirst({
+        where: {
+          topicId,
+          userId: req.user?.id,
+        },
+      });
+      if (downvote !== null) {
+        await prisma.downVoteOnTopic.delete({
+          where: {
+            id: downvote.id,
+          },
+        });
+        await prisma.topic.update({
+          where: {
+            id: topicId,
+          },
+          data: {
+            downvotes: {
+              decrement: 1,
+            },
+            votes: {
+              increment: 1,
+            },
+          },
+        });
+      }
+      if (upvote === null) {
+        await prisma.upVoteOnTopic.create({
+          data: {
+            topicId,
+            userId: req.user?.id as string,
+          },
+        });
+        await prisma.topic.update({
+          where: {
+            id: topicId,
+          },
+          data: {
+            upvotes: {
+              increment: 1,
+            },
+            votes: {
+              increment: 1,
+            },
+          },
+        });
+        res.json(customResponse(200, "Topic Upvoted."));
+      }
+      if (upvote !== null) {
+        res.json(customResponse(200, "Already Upvoted."));
+      }
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async downvoteTopic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const topicId = req.params.id;
+      const upvote = await prisma.upVoteOnTopic.findFirst({
+        where: {
+          topicId,
+          userId: req.user?.id,
+        },
+      });
+      const downvote = await prisma.downVoteOnTopic.findFirst({
+        where: {
+          topicId,
+          userId: req.user?.id,
+        },
+      });
+
+      if (upvote !== null) {
+        await prisma.upVoteOnTopic.delete({
+          where: {
+            id: upvote.id,
+          },
+        });
+        await prisma.topic.update({
+          where: {
+            id: topicId,
+          },
+          data: {
+            upvotes: {
+              decrement: 1,
+            },
+            votes: {
+              decrement: 1,
+            },
+          },
+        });
+      }
+      if (downvote === null) {
+        await prisma.downVoteOnTopic.create({
+          data: {
+            topicId,
+            userId: req.user?.id as string,
+          },
+        });
+        await prisma.topic.update({
+          where: {
+            id: topicId,
+          },
+          data: {
+            downvotes: {
+              increment: 1,
+            },
+            votes: {
+              decrement: 1,
+            },
+          },
+        });
+        res.json(customResponse(200, "Topic Downvoted."));
+      }
+      if (downvote !== null) {
+        res.json(customResponse(200, "Already Downvoted."));
+      }
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
   async searchTopicsByNameAndDescription(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       if (req.body.name === null) {
@@ -69,6 +242,7 @@ const topicController = {
             downvotes: true,
             views: true,
             shares: true,
+            votes: true,
             commentCount: true,
             categories: true,
             createdAt: true,
@@ -77,6 +251,7 @@ const topicController = {
                 id: true,
                 name: true,
                 username: true,
+                picture: true,
               },
             },
           },
@@ -104,6 +279,7 @@ const topicController = {
           downvotes: true,
           views: true,
           shares: true,
+          votes: true,
           commentCount: true,
           categories: true,
           createdAt: true,

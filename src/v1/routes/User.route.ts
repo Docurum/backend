@@ -7,5 +7,7 @@ const router: Router = express.Router();
 router.get("/get-user", authMiddleware, userController.getUser);
 router.put("/update-picture", authMiddleware, userController.updateProfilePicture);
 router.put("/create-doctor", authMiddleware, userController.createDoctor);
+router.get("/get-recommended-users", authMiddleware, userController.getRecommendedUsers);
+router.get("/get-user-by-username/:username", userController.getUserByUsername);
 
 export default router;

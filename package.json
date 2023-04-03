@@ -2,13 +2,13 @@
   "name": "api_starter",
   "version": "1.0.0",
   "description": "API Starter Created by @pinakipb2",
-  "main": "server.js",
+  "main": "server.ts",
   "_moduleAliases": {
     "@src": "build",
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "node -r module-alias/register build/server.js",
+    "start": "npx ts-node --transpile-only --files src/server.ts",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "npx ts-node --transpile-only --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
@@ -20,6 +20,10 @@
     "prisma:migrate-dev": "npx prisma migrate dev",
     "prisma:migrate-prod": "npx prisma migrate deploy",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
+  },
+  "engines" : { 
+    "npm" : ">=8.0.0 <9.5.0",
+    "node" : ">=16.0.0 <18.14.2"
   },
   "keywords": [],
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",

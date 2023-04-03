@@ -5,7 +5,7 @@ import helmet from "helmet";
 import createError, { HttpError } from "http-errors";
 import morgan from "morgan";
 import path from "path";
-import favicon from "serve-favicon";
+// import favicon from "serve-favicon";
 import xss from "xss-clean";
 
 import "@v1/config/env.config";
@@ -44,7 +44,7 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
-app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+// app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 // app.use(authMiddleware);
 
 // Welcome Route

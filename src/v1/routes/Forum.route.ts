@@ -25,8 +25,8 @@ router.get("/get-comments-by-topic/:id", authMiddleware, commentController.getCo
 
 // category routes
 router.post("/create-category", authMiddleware, topicController.createCategory);
-router.post("/get-categories-by-id", authMiddleware, topicController.getCategories);
-router.post("/search-categories-by-name", authMiddleware, topicController.searchCategoriesByName);
+router.post("/get-categories-by-id", topicController.getCategories);
+router.post("/search-categories-by-name", topicController.searchCategoriesByName);
 router.post("/is-category-present", authMiddleware, topicController.categoryExists);
 
 export default router;

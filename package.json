@@ -2,7 +2,7 @@
   "name": "api_starter",
   "version": "1.0.0",
   "description": "API Starter Created by @pinakipb2",
-  "main": "server.js",
+  "main": "server.ts",
   "_moduleAliases": {
     "@src": "build",
     "@v1": "build/v1"

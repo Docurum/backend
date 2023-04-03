@@ -73,8 +73,10 @@ CREATE TABLE "refreshTokens" (
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
+    "description" TEXT,
+    "imageUrl" TEXT,
+    "animation" JSONB,
+    "color" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -82,43 +84,21 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
-CREATE TABLE "CategoriesOnTopics" (
-    "topicId" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
-    "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "assignedBy" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "CategoriesOnTopics_pkey" PRIMARY KEY ("topicId","categoryId")
-);
-
--- CreateTable
-CREATE TABLE "CategoriesOnComments" (
-    "commentId" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
-    "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "assignedBy" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "CategoriesOnComments_pkey" PRIMARY KEY ("commentId","categoryId")
-);
-
--- CreateTable
 CREATE TABLE "Comment" (
     "id" TEXT NOT NULL,
     "description" JSONB NOT NULL,
-    "upvotes" INTEGER DEFAULT 0,
-    "downvotes" INTEGER DEFAULT 0,
-    "views" INTEGER DEFAULT 0,
-    "shares" INTEGER DEFAULT 0,
+    "votes" INTEGER NOT NULL DEFAULT 0,
+    "upvotes" INTEGER NOT NULL DEFAULT 0,
+    "downvotes" INTEGER NOT NULL DEFAULT 0,
+    "views" INTEGER NOT NULL DEFAULT 0,
+    "shares" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
     "assetUrl" TEXT[],
     "topicId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "categoryId" TEXT NOT NULL,
+    "categories" TEXT[],
+    "parent_id" TEXT,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
@@ -128,17 +108,63 @@ CREATE TABLE "Topic" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" JSONB NOT NULL,
-    "upvotes" INTEGER DEFAULT 0,
-    "downvotes" INTEGER DEFAULT 0,
-    "views" INTEGER DEFAULT 0,
-    "shares" INTEGER DEFAULT 0,
-    "commentCount" INTEGER DEFAULT 0,
+    "votes" INTEGER NOT NULL DEFAULT 0,
+    "upvotes" INTEGER NOT NULL DEFAULT 0,
+    "downvotes" INTEGER NOT NULL DEFAULT 0,
+    "views" INTEGER NOT NULL DEFAULT 0,
+    "shares" INTEGER NOT NULL DEFAULT 0,
+    "commentCount" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
     "assetUrl" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "categories" TEXT[],
 
     CONSTRAINT "Topic_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UpVoteOnTopic" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "topicId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UpVoteOnTopic_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DownVoteOnTopic" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "topicId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DownVoteOnTopic_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UpVoteOnComment" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "commentId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UpVoteOnComment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DownVoteOnComment" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "commentId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DownVoteOnComment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -187,6 +213,9 @@ CREATE UNIQUE INDEX "emailTokens_token_key" ON "emailTokens"("token");
 -- CreateIndex
 CREATE UNIQUE INDEX "refreshTokens_token_key" ON "refreshTokens"("token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_clinicId_fkey" FOREIGN KEY ("clinicId") REFERENCES "Clinic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -197,28 +226,37 @@ ALTER TABLE "Doctor" ADD CONSTRAINT "Doctor_userId_fkey" FOREIGN KEY ("userId") 
 ALTER TABLE "refreshTokens" ADD CONSTRAINT "refreshTokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CategoriesOnTopics" ADD CONSTRAINT "CategoriesOnTopics_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CategoriesOnTopics" ADD CONSTRAINT "CategoriesOnTopics_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CategoriesOnTopics" ADD CONSTRAINT "CategoriesOnTopics_assignedBy_fkey" FOREIGN KEY ("assignedBy") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CategoriesOnComments" ADD CONSTRAINT "CategoriesOnComments_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CategoriesOnComments" ADD CONSTRAINT "CategoriesOnComments_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CategoriesOnComments" ADD CONSTRAINT "CategoriesOnComments_assignedBy_fkey" FOREIGN KEY ("assignedBy") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Topic" ADD CONSTRAINT "Topic_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UpVoteOnTopic" ADD CONSTRAINT "UpVoteOnTopic_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UpVoteOnTopic" ADD CONSTRAINT "UpVoteOnTopic_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DownVoteOnTopic" ADD CONSTRAINT "DownVoteOnTopic_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DownVoteOnTopic" ADD CONSTRAINT "DownVoteOnTopic_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UpVoteOnComment" ADD CONSTRAINT "UpVoteOnComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UpVoteOnComment" ADD CONSTRAINT "UpVoteOnComment_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DownVoteOnComment" ADD CONSTRAINT "DownVoteOnComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DownVoteOnComment" ADD CONSTRAINT "DownVoteOnComment_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;

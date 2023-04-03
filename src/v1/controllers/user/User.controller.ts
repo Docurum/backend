@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2";
 import prisma from "@src/prisma";
 import { customResponse } from "@src/v1/utils/Response.util";
 import { NextFunction, Request, Response } from "express";
@@ -107,7 +106,6 @@ const userController = {
       const resp = await doctorSchema.parseAsync(req.body);
       const data = {
         ...resp,
-        uuid: createId(),
         userId,
       };
 

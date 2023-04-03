@@ -21,9 +21,9 @@
     "prisma:migrate-prod": "npx prisma migrate deploy",
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
-  "engines": {
-    "npm": "9.5.0",
-    "node": "18.14.2"
+  "engines" : { 
+    "npm" : ">=8.0.0 <9.5.0",
+    "node" : ">=16.0.0 <18.14.2"
   },
   "keywords": [],
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",

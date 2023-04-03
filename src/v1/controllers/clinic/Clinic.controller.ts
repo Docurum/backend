@@ -4,10 +4,29 @@ import { customResponse } from "@src/v1/utils/Response.util";
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import { z } from "zod";
-
+const doctorSchema = z.object({
+  medicalCouncil: z.string(),
+  registrationNumber: z.string(),
+  hospital: z.string(),
+  registrationYear: z.string(),
+  photoId: z.string(), // photoId for verification
+  registrationCertificate: z.string(), // Registration Council Certificate
+  degreeCertificate: z.string(), // Highest Degree / Diploma certificate
+  biography: z.string(),
+  qualification: z.string(),
+  title: z.string(),
+  speciality: z.string().array(),
+  experience: z.number(),
+  languages: z.string().array(),
+  contact: z.string(),
+});
 const clinicSchema = z
   .object({
-    name: z.string().min(4, "Name must contain at least 4 characters").max(150, "Name must contain at most 150 characters").trim(),
+    name: z
+      .string()
+      .min(4, "Name must contain at least 4 characters")
+      .max(150, "Name must contain at most 150 characters")
+      .trim(),
     email: emailSchema,
     phoneNumber: z.string(),
     type: z.string(),
@@ -22,7 +41,11 @@ const clinicSchema = z
   .strict();
 
 const clinicController = {
-  async createClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async createClinic(
+    req: Request<{}, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const resp = await clinicSchema.parseAsync(req.body);
       const admins = [];
@@ -35,11 +58,70 @@ const clinicController = {
       res.json(customResponse(201, "Clinic created successfully 👌"));
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
+  async getCredencials(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try{
+const userId = req.user?.id as string;
+    const user = await prisma.user.findFirstOrThrow({
+      where: {
+        id: userId,
+      },
+    });
+    if (user.isAdmin) {
+      const doctors = await prisma.doctor.findMany({
+        where: {
+          isVerified: false,
+        },
+      });
+      res.json(customResponse(200, doctors));
+    }
+    }catch(err){
+      console.log(err);
+       return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
+    }
+  },
+  async verifyDoctor(
+    req: Request<{ id: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const resp = await doctorSchema.parseAsync(req.body);
+      const userId = req.user?.id as string;
+      const data = {
+        ...resp,
 
-  async editClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+        userId: userId,
+      };
+      await prisma.doctor.create({ data });
+      res.json(
+        customResponse(
+          201,
+          "you have successfully send you credentials please wait till it gets approved👌"
+        )
+      );
+    } catch (err) {
+      console.log(err);
+      console.log(err);
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
+    }
+  },
+  async editClinic(
+    req: Request<{ id: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const resp = await clinicSchema.parseAsync(req.body);
       const clinicId = req.params.id;
@@ -65,10 +147,17 @@ const clinicController = {
       }
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
-  async getClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async getClinic(
+    req: Request<{}, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const adminId = req.user?.id as string;
       const clinics = await prisma.clinic.findMany({
@@ -81,10 +170,17 @@ const clinicController = {
       res.json(customResponse(200, clinics));
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
-  async deleteClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async deleteClinic(
+    req: Request<{ id: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const clinicId = req.params.id;
       const userId = req.user?.id as string;
@@ -105,10 +201,17 @@ const clinicController = {
       }
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
-  async getClinicById(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async getClinicById(
+    req: Request<{ id: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const clinicId = req.params.id;
       const clinic = await prisma.clinic.findUnique({
@@ -119,10 +222,17 @@ const clinicController = {
       res.json(customResponse(200, clinic));
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
-  async getClinicByUsername(req: Request<{ username: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async getClinicByUsername(
+    req: Request<{ username: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const username = req.params.username;
       const user = await prisma.user.findUniqueOrThrow({
@@ -141,7 +251,10 @@ const clinicController = {
       res.json(customResponse(200, clinics));
     } catch (err) {
       console.log(err);
-      return next({ status: createError.InternalServerError().status, message: err });
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
     }
   },
 };

@@ -38,6 +38,10 @@ const userController = {
           username: true,
           picture: true,
           isDoctor: true,
+          bio: true,
+          dob: true,
+          phoneNumber: true,
+          
         },
       });
       res.json(customResponse(200, user));

@@ -19,7 +19,7 @@ const doctorSchema = z.object({
   experience: z.number(),
   languages: z.string().array(),
   contact: z.string(),
-});
+}).strict();
 const clinicSchema = z
   .object({
     name: z

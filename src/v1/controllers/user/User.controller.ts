@@ -32,6 +32,13 @@ const userController = {
       };
       const user = await prisma.user.findFirst({
         where: data,
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          picture: true,
+          isDoctor: true,
+        },
       });
       res.json(customResponse(200, user));
     } catch (err) {
@@ -51,6 +58,7 @@ const userController = {
           name: true,
           username: true,
           picture: true,
+          isDoctor: true,
         },
       });
       res.json(customResponse(200, user));
@@ -67,6 +75,7 @@ const userController = {
           name: true,
           username: true,
           picture: true,
+          isDoctor: true,
         },
         take: 10,
       });

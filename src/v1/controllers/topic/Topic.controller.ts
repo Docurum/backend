@@ -75,6 +75,50 @@ const topicController = {
               name: true,
               username: true,
               picture: true,
+              isDoctor: true,
+            },
+          },
+        },
+      });
+      res.json(customResponse(200, topics));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getTopicByUserId(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: userId,
+        },
+      });
+      const topics = await prisma.topic.findMany({
+        where: {
+          userId: user.id,
+        },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          assetUrl: true,
+          upvotes: true,
+          downvotes: true,
+          views: true,
+          shares: true,
+          votes: true,
+          commentCount: true,
+          categories: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              picture: true,
+              isDoctor: true,
             },
           },
         },
@@ -225,12 +269,16 @@ const topicController = {
         res.json(customResponse(200, topics));
       }
       const topicName = req.body.name;
+      const categories = req.body.categories as string[];
       if (topicName !== null) {
         const topics = await prisma.topic.findMany({
           where: {
             title: {
               contains: topicName,
               mode: "insensitive",
+            },
+            categories: {
+              hasEvery: categories,
             },
           },
           select: {
@@ -252,6 +300,7 @@ const topicController = {
                 name: true,
                 username: true,
                 picture: true,
+                isDoctor: true,
               },
             },
           },
@@ -289,6 +338,7 @@ const topicController = {
               name: true,
               username: true,
               picture: true,
+              isDoctor: true,
             },
           },
         },
@@ -302,12 +352,23 @@ const topicController = {
   async createCategory(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await categorySchema.parseAsync(req.body);
-      const data = {
-        ...resp,
-        name: resp.name.toLowerCase(),
-      };
-      await prisma.category.create({ data });
-      res.json(customResponse(201, "Category created successfully."));
+      const userId = req.user?.id as string;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: userId,
+        },
+      });
+      if (!user.isAdmin) {
+        res.json(customResponse(200, "Only verified doctors and admins can create new categories"));
+      }
+      if (user.isAdmin) {
+        const data = {
+          ...resp,
+          name: resp.name.toLowerCase(),
+        };
+        await prisma.category.create({ data });
+        res.json(customResponse(201, "Category created successfully."));
+      }
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

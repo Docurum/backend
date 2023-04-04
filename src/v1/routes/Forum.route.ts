@@ -12,6 +12,7 @@ router.post("/create-topic", authMiddleware, topicController.createTopic);
 router.post("/search-topics", topicController.searchTopicsByNameAndDescription);
 router.get("/upvote-topic/:id", authMiddleware, topicController.upvoteTopic);
 router.get("/downvote-topic/:id", authMiddleware, topicController.downvoteTopic);
+router.get("/get-topic-userid", authMiddleware, topicController.getTopicByUserId);
 
 // open routes
 router.get("/get-topic/:id", topicController.getTopicsById);

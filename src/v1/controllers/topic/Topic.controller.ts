@@ -352,12 +352,23 @@ const topicController = {
   async createCategory(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await categorySchema.parseAsync(req.body);
-      const data = {
-        ...resp,
-        name: resp.name.toLowerCase(),
-      };
-      await prisma.category.create({ data });
-      res.json(customResponse(201, "Category created successfully."));
+      const userId = req.user?.id as string;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: userId,
+        },
+      });
+      if (!user.isAdmin) {
+        res.json(customResponse(200, "Only verified doctors and admins can create new categories"));
+      }
+      if (user.isAdmin) {
+        const data = {
+          ...resp,
+          name: resp.name.toLowerCase(),
+        };
+        await prisma.category.create({ data });
+        res.json(customResponse(201, "Category created successfully."));
+      }
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

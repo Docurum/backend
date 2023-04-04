@@ -36,7 +36,6 @@ model User {
 
 model Doctor {
   id                      String   @id @default(cuid())
-  uuid                    String   @unique
   isVerified              Boolean  @default(false)
   medicalCouncil          String?
   registrationNumber      String?

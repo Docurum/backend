@@ -27,7 +27,7 @@ const limiter = rateLimit({
 });
 
 const corsOption = {
-  origin: [config.FRONTEND_URL],
+  origin: [config.FRONTEND_URL, "http://localhost:3000", "https://www.docurum.com"],
 };
 
 const app: Express = express();

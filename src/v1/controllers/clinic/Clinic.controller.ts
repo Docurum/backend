@@ -64,6 +64,28 @@ const clinicController = {
       });
     }
   },
+  async isAppliedDoctor(req: Request, res: Response, next: NextFunction): Promise<void> {
+   try{
+    const userId = req.user?.id as string;
+    const doctor = await prisma.doctor.findFirst({
+      where: {
+        userId,
+      }
+    })
+if(doctor){
+  res.json(customResponse(200,{applied:true}));
+}
+else{
+  res.json(customResponse(200,{applied:false}));
+}
+   }catch(err){
+    console.log(err);
+    return next({
+      status: createError.InternalServerError().status,
+      message: err,
+    });
+   }
+  },
   async getCredencials(req: Request, res: Response, next: NextFunction): Promise<void> {
     try{
 const userId = req.user?.id as string;

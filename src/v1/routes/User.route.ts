@@ -9,5 +9,6 @@ router.put("/update-picture", authMiddleware, userController.updateProfilePictur
 router.put("/create-doctor", authMiddleware, userController.createDoctor);
 router.get("/get-recommended-users", authMiddleware, userController.getRecommendedUsers);
 router.get("/get-user-by-username/:username", userController.getUserByUsername);
+router.put("/edit-user", authMiddleware, userController.editUser);
 
 export default router;

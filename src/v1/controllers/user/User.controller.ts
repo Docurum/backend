@@ -58,6 +58,7 @@ const userController = {
             }
           }
         },
+
       });
       res.json(customResponse(200, user));
     } catch (err) {

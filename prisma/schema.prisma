@@ -34,6 +34,7 @@ model User {
   UpVoteOnComment   UpVoteOnComment[]
   DownVoteOnComment DownVoteOnComment[]
  bio                String?
+
 }
 
 model Doctor {
@@ -45,7 +46,6 @@ model Doctor {
   photoId                 String? // photoId for verification
   registrationCertificate String? //Registration Council Certificate
   degreeCertificate       String? //Highest Degree / Diploma certificate
-  biography               String?
   qualification           String
   title                   String
   speciality              String[]

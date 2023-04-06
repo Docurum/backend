@@ -41,8 +41,23 @@ const userController = {
           bio: true,
           dob: true,
           phoneNumber: true,
+          doctor:  {
+            select: {
+               isVerified: true,
+                medicalCouncil: true,
+                registrationNumber: true,
+                registrationYear: true,
+                biography: true,
+                qualification: true,
+                title: true,
+                speciality: true,
+                experience: true,
+                languages: true,
+            }
+          }
           
         },
+
       });
       res.json(customResponse(200, user));
     } catch (err) {

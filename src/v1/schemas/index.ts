@@ -10,7 +10,7 @@ export const envSchema = z
       .min(1)
       .default("5000")
       .transform((port) => Number(port)),
-    FRONTEND_URL: z.string().default("http://localhost:3000"),
+    FRONTEND_URL: z.string().default("https://www.docurum.com/"),
     DEV_DB_URL: z.string().min(1),
     TEST_DB_URL: z.string().min(1),
     PROD_DB_URL: z.string().optional(),

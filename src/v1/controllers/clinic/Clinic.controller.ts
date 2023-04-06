@@ -85,12 +85,12 @@ const clinicController = {
      }
      if(doctor?.isVerified === false){
         res.json(customResponse(200, {
-          message:"pending"
+          message:"Pending Approval"
         }));
      }
      if(!doctor){
         res.json(customResponse(200, {
-          message:"not applied"
+          message:"Verificatication Required"
         }));
      }
     } catch (err) {

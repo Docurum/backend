@@ -41,6 +41,22 @@ const userController = {
           dob: true,
           bio: true,
           phoneNumber: true,
+          doctor: {
+            select: {
+              id: true,
+              medicalCouncil: true,
+              registrationNumber: true,     
+              degreeCertificate: true,
+              biography: true,
+              qualification: true,
+              title: true,
+              speciality: true,
+              experience: true,
+              languages: true,
+              contact: true,
+              
+            }
+          }
         },
       });
       res.json(customResponse(200, user));

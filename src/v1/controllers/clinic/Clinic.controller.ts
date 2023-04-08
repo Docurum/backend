@@ -4,22 +4,24 @@ import { customResponse } from "@src/v1/utils/Response.util";
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import { z } from "zod";
-const doctorSchema = z.object({
-  medicalCouncil: z.string(),
-  registrationNumber: z.string(),
-  hospital: z.string(),
-  registrationYear: z.string(),
-  photoId: z.string(), // photoId for verification
-  registrationCertificate: z.string(), // Registration Council Certificate
-  degreeCertificate: z.string(), // Highest Degree / Diploma certificate
-  biography: z.string(),
-  qualification: z.string(),
-  title: z.string(),
-  speciality: z.string().array(),
-  experience: z.number(),
-  languages: z.string().array(),
-  contact: z.string(),
-}).strict();
+const doctorSchema = z
+  .object({
+    medicalCouncil: z.string(),
+    registrationNumber: z.string(),
+    hospital: z.string(),
+    registrationYear: z.string(),
+    photoId: z.string(), // photoId for verification
+    registrationCertificate: z.string(), // Registration Council Certificate
+    degreeCertificate: z.string(), // Highest Degree / Diploma certificate
+    biography: z.string(),
+    qualification: z.string(),
+    title: z.string(),
+    speciality: z.string().array(),
+    experience: z.number(),
+    languages: z.string().array(),
+    contact: z.string(),
+  })
+  .strict();
 const clinicSchema = z
   .object({
     name: z
@@ -64,52 +66,110 @@ const clinicController = {
       });
     }
   },
-  async isAppliedDoctor(req: Request, res: Response, next: NextFunction): Promise<void> {
-   try{
-    const userId = req.user?.id as string;
-    const doctor = await prisma.doctor.findFirst({
-      where: {
-        userId,
-      }
-    })
-if(doctor){
-  res.json(customResponse(200,{applied:true}));
-}
-else{
-  res.json(customResponse(200,{applied:false}));
-}
-   }catch(err){
-    console.log(err);
-    return next({
-      status: createError.InternalServerError().status,
-      message: err,
-    });
-   }
-  },
-  async getCredencials(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try{
-const userId = req.user?.id as string;
-    const user = await prisma.user.findFirstOrThrow({
-      where: {
-        id: userId,
-      },
-    });
-    if (user.isAdmin) {
-      const doctors = await prisma.doctor.findMany({
+  async checkDoctorApplicationStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+      const doctor = await prisma.doctor.findFirst({
         where: {
-          isVerified: false,
+          userId,
         },
       });
-      res.json(customResponse(200, doctors));
-    }
-    }catch(err){
+     if(doctor?.isVerified){
+        res.json(customResponse(200, {
+          message:"verified"
+        }));
+     }
+     if(doctor?.isVerified === false){
+        res.json(customResponse(200, {
+          message:"Pending Approval"
+        }));
+     }
+     if(!doctor){
+        res.json(customResponse(200, {
+          message:"Verificatication Required"
+        }));
+     }
+    } catch (err) {
       console.log(err);
-       return next({
+      return next({
         status: createError.InternalServerError().status,
         message: err,
       });
     }
   },
+  async getCredencials(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+      const user = await prisma.user.findFirstOrThrow({
+        where: {
+          id: userId,
+        },
+      });
+      if (user.isAdmin) {
+        const doctors = await prisma.doctor.findMany({
+          where: {
+            isVerified: false,
+          },
+        });
+        res.json(customResponse(200, doctors));
+      }
+    } catch (err) {
+      console.log(err);
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
+    }
+  },
+  async approveDoctorById(
+    req: Request<{ id: string }, {}, any>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const doctorId = req.params.id;
+      const doctor = await prisma.doctor.findUniqueOrThrow({
+        where: {
+          id: doctorId,
+        },
+      });
+      if (doctor) {
+        await prisma.doctor.update({
+          where: {
+            id: doctorId,
+          },
+          data: {
+            isVerified: true,
+          },
+        });
+        // make the user is doctor true after verification
+        const userId = doctor.userId;
+        await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            isDoctor: true,
+          },
+        });
+        res.json(customResponse(200, "Doctor verified successfully"));
+      }
+    } catch (err) {
+      return next({
+        status: createError.InternalServerError().status,
+        message: err,
+      });
+    }
+  },
+
   async verifyDoctor(
     req: Request<{ id: string }, {}, any>,
     res: Response,
@@ -240,6 +300,7 @@ const userId = req.user?.id as string;
         where: {
           id: clinicId,
         },
+       
       });
       res.json(customResponse(200, clinic));
     } catch (err) {

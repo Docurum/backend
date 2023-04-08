@@ -9,31 +9,66 @@ datasource db {
 }
 
 model User {
-  id                String              @id @default(cuid())
-  name              String
-  username          String              @unique
-  email             String              @unique
-  password          String
-  isEmailVerified   Boolean             @default(false)
-  isAdmin           Boolean             @default(false)
-  picture           String?
-  dob               DateTime?
-  blocked           Boolean             @default(false)
-  isDoctor          Boolean             @default(false)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  clinicId          String?
-  bio               String?
-  phoneNumber       String?
-  Comment           Comment[]
-  doctor            Doctor?
-  DownVoteOnComment DownVoteOnComment[]
-  DownVoteOnTopic   DownVoteOnTopic[]
-  Topic             Topic[]
-  UpVoteOnComment   UpVoteOnComment[]
-  UpVoteonTopic     UpVoteOnTopic[]
-  Clinic            Clinic?             @relation(fields: [clinicId], references: [id])
-  refreshToken      refreshTokens[]
+  id                       String              @id @default(cuid())
+  name                     String
+  username                 String              @unique
+  email                    String              @unique
+  password                 String
+  isEmailVerified          Boolean             @default(false)
+  isAdmin                  Boolean             @default(false)
+  picture                  String?
+  dob                      DateTime?
+  blocked                  Boolean             @default(false)
+  isDoctor                 Boolean             @default(false)
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  clinicId                 String?
+  bio                      String?
+  phoneNumber              String?
+  Comment                  Comment[]
+  doctor                   Doctor?
+  DownVoteOnComment        DownVoteOnComment[]
+  DownVoteOnTopic          DownVoteOnTopic[]
+  Topic                    Topic[]
+  UpVoteOnComment          UpVoteOnComment[]
+  UpVoteonTopic            UpVoteOnTopic[]
+  Clinic                   Clinic?             @relation(fields: [clinicId], references: [id])
+  refreshToken             refreshTokens[]
+  Pricing                  Pricing[]
+  UserHostConsultation     Consultation[]      @relation("UserConsultationHost")
+  UserAttendeeConsultation Consultation[]      @relation("UserConsultationAttendee")
+}
+
+model Pricing {
+  id                String   @id @default(cuid())
+  title             String
+  description       String?
+  imageUrl          String?
+  userId            String
+  costPerSession    Int
+  numberOfSessions  Int
+  setRecommended    Boolean  @default(false)
+  durationInMinutes Int?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Consultation {
+  id                String   @id @default(cuid())
+  title             String
+  description       String?
+  attachment        String[]
+  durationInMinutes Int?
+  rating            Int?
+  isComplete        Boolean  @default(false)
+  hostId            String
+  host              User     @relation(fields: [hostId], references: [id], onDelete: Cascade, name: "UserConsultationHost")
+  attendeeId        String
+  attendee          User     @relation(fields: [attendeeId], references: [id], onDelete: Cascade, name: "UserConsultationAttendee")
+  userId            String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Doctor {

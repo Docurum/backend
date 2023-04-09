@@ -8,10 +8,10 @@
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--max-old-space-size=4096 npx ts-node --files src/server.ts",
+    "start": "npx ts-node --files src/server.ts",
     "prestart": "npm i && npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
-    "dev": "NODE_OPTIONS=--max-old-space-size=4096 npm run downgradeTestEnv && nodemon --files src/server.ts",
-    "prod": "NODE_OPTIONS=--max-old-space-size=4096 npx ts-node --files src/server.ts",
+    "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
+    "prod": "npx ts-node --files src/server.ts",
     "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",

@@ -8,7 +8,7 @@
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "npx ts-node --files src/server.ts",
+    "start": "NODE_OPTIONS='--max-old-space-size=8192' npx ts-node --files src/server.ts",
     "prestart": "npm i && NODE_OPTIONS='--max-old-space-size=8192' npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "npx ts-node --files src/server.ts",

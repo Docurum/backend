@@ -23,6 +23,10 @@ export const envSchema = z
     PASSWORD_SALT_ROUNDS: z.number().default(10),
     USER_ACCESS_SECRET: z.string().min(1),
     USER_REFRESH_SECRET: z.string().min(1),
+    GOOGLE_OAUTH_CLIENT_ID: z.string().min(1),
+    GOOGLE_OAUTH_CLIENT_SECRET: z.string().min(1),
+    GOOGLE_OAUTH_CLIENT_REDIRECT_URL: z.string().min(1),
+    GOOGLE_API_KEY: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

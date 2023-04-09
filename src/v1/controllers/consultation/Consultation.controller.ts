@@ -2,20 +2,18 @@ import { google } from "googleapis";
 import { NextFunction, Request, Response } from "express";
 import { customResponse } from "@src/v1/utils/Response.util";
 import createError from "http-errors";
-import dotenv from "dotenv";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
-
-dotenv.config();
+import config from "@src/v1/config";
 
 const consultationController = {
   async scheduleEvent(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const googleCalender = google.calendar({
         version: "v3",
-        auth: process.env.GOOGLE_API_KEY,
+        auth: config.GOOGLE_API_KEY,
       });
-      const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_OAUTH_CLIENT_ID, process.env.GOOGLE_OAUTH_CLIENT_SECRET, process.env.GOOGLE_OAUTH_CLIENT_REDIRECT_URL);
+      const oauth2Client = new google.auth.OAuth2(config.GOOGLE_OAUTH_CLIENT_ID, config.GOOGLE_OAUTH_CLIENT_SECRET, config.GOOGLE_OAUTH_CLIENT_REDIRECT_URL);
       const token = req.body.token;
       oauth2Client.setCredentials(token);
 

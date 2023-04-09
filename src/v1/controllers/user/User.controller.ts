@@ -45,7 +45,7 @@ const userController = {
             select: {
               id: true,
               medicalCouncil: true,
-              registrationNumber: true,     
+              registrationNumber: true,
               degreeCertificate: true,
               biography: true,
               qualification: true,
@@ -54,11 +54,9 @@ const userController = {
               experience: true,
               languages: true,
               contact: true,
-              
-            }
-          }
+            },
+          },
         },
-
       });
       res.json(customResponse(200, user));
     } catch (err) {

@@ -24,11 +24,7 @@ const doctorSchema = z
   .strict();
 const clinicSchema = z
   .object({
-    name: z
-      .string()
-      .min(4, "Name must contain at least 4 characters")
-      .max(150, "Name must contain at most 150 characters")
-      .trim(),
+    name: z.string().min(4, "Name must contain at least 4 characters").max(150, "Name must contain at most 150 characters").trim(),
     email: emailSchema,
     phoneNumber: z.string(),
     type: z.string(),
@@ -43,11 +39,7 @@ const clinicSchema = z
   .strict();
 
 const clinicController = {
-  async createClinic(
-    req: Request<{}, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async createClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await clinicSchema.parseAsync(req.body);
       const admins = [];
@@ -66,11 +58,7 @@ const clinicController = {
       });
     }
   },
-  async checkDoctorApplicationStatus(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async checkDoctorApplicationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.id as string;
       const doctor = await prisma.doctor.findFirst({
@@ -78,21 +66,27 @@ const clinicController = {
           userId,
         },
       });
-     if(doctor?.isVerified){
-        res.json(customResponse(200, {
-          message:"verified"
-        }));
-     }
-     if(doctor?.isVerified === false){
-        res.json(customResponse(200, {
-          message:"Pending Approval"
-        }));
-     }
-     if(!doctor){
-        res.json(customResponse(200, {
-          message:"Verificatication Required"
-        }));
-     }
+      if (doctor?.isVerified) {
+        res.json(
+          customResponse(200, {
+            message: "verified",
+          })
+        );
+      }
+      if (doctor?.isVerified === false) {
+        res.json(
+          customResponse(200, {
+            message: "Pending Approval",
+          })
+        );
+      }
+      if (!doctor) {
+        res.json(
+          customResponse(200, {
+            message: "Verificatication Required",
+          })
+        );
+      }
     } catch (err) {
       console.log(err);
       return next({
@@ -101,11 +95,7 @@ const clinicController = {
       });
     }
   },
-  async getCredencials(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getCredencials(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.id as string;
       const user = await prisma.user.findFirstOrThrow({
@@ -129,11 +119,7 @@ const clinicController = {
       });
     }
   },
-  async approveDoctorById(
-    req: Request<{ id: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async approveDoctorById(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const doctorId = req.params.id;
       const doctor = await prisma.doctor.findUniqueOrThrow({
@@ -170,11 +156,7 @@ const clinicController = {
     }
   },
 
-  async verifyDoctor(
-    req: Request<{ id: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async verifyDoctor(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await doctorSchema.parseAsync(req.body);
       const userId = req.user?.id as string;
@@ -184,12 +166,7 @@ const clinicController = {
         userId: userId,
       };
       await prisma.doctor.create({ data });
-      res.json(
-        customResponse(
-          201,
-          "you have successfully send you credentials please wait till it gets approved👌"
-        )
-      );
+      res.json(customResponse(201, "you have successfully send you credentials please wait till it gets approved👌"));
     } catch (err) {
       console.log(err);
       console.log(err);
@@ -199,11 +176,7 @@ const clinicController = {
       });
     }
   },
-  async editClinic(
-    req: Request<{ id: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async editClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const resp = await clinicSchema.parseAsync(req.body);
       const clinicId = req.params.id;
@@ -235,11 +208,7 @@ const clinicController = {
       });
     }
   },
-  async getClinic(
-    req: Request<{}, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getClinic(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const adminId = req.user?.id as string;
       const clinics = await prisma.clinic.findMany({
@@ -258,11 +227,7 @@ const clinicController = {
       });
     }
   },
-  async deleteClinic(
-    req: Request<{ id: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async deleteClinic(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const clinicId = req.params.id;
       const userId = req.user?.id as string;
@@ -289,18 +254,13 @@ const clinicController = {
       });
     }
   },
-  async getClinicById(
-    req: Request<{ id: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getClinicById(req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const clinicId = req.params.id;
       const clinic = await prisma.clinic.findUnique({
         where: {
           id: clinicId,
         },
-       
       });
       res.json(customResponse(200, clinic));
     } catch (err) {
@@ -311,11 +271,7 @@ const clinicController = {
       });
     }
   },
-  async getClinicByUsername(
-    req: Request<{ username: string }, {}, any>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getClinicByUsername(req: Request<{ username: string }, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const username = req.params.username;
       const user = await prisma.user.findUniqueOrThrow({

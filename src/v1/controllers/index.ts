@@ -6,3 +6,4 @@ export { default as loginController } from "./auth/Login.controller";
 export { default as topicController } from "./topic/Topic.controller";
 export { default as userController } from "./user/User.controller";
 export { default as clinicController } from "./clinic/Clinic.controller";
+export { default as consultationController } from "./consultation/Consultation.controller";

@@ -281,6 +281,11 @@ const topicController = {
               hasEvery: categories,
             },
           },
+          orderBy: [
+            {
+              updatedAt: "desc",
+            },
+          ],
           select: {
             id: true,
             title: true,

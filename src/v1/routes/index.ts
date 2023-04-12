@@ -3,3 +3,4 @@ export { default as forumRoutes } from "./Forum.route";
 export { default as userRoutes } from "./User.route";
 export { default as clinicRoutes } from "./Clinic.route";
 export { default as consultationRoutes } from "./Consultation.route";
+export { default as pricingsRoutes } from "./Pricing.route";

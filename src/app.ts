@@ -12,7 +12,7 @@ import "@v1/config/env.config";
 
 import config from "@v1/config";
 // import { authMiddleware } from "@v1/middlewares";
-import { authRoutes, clinicRoutes, consultationRoutes, forumRoutes, userRoutes } from "@v1/routes";
+import { authRoutes, clinicRoutes, consultationRoutes, forumRoutes, pricingsRoutes, userRoutes } from "@v1/routes";
 
 // RateLimitter
 const limiter = rateLimit({
@@ -60,6 +60,7 @@ app.use(`/${apiVersion}/forum`, forumRoutes);
 app.use(`/${apiVersion}/user`, userRoutes);
 app.use(`/${apiVersion}/clinic`, clinicRoutes);
 app.use(`/${apiVersion}/consult`, consultationRoutes);
+app.use(`/${apiVersion}/pricing`, pricingsRoutes);
 
 // 404 Handler
 app.use((_req: Request, _res: Response, next: NextFunction) => {

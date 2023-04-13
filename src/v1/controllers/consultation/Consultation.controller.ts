@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import { NextFunction, Request, Response } from "express";
+import prisma from "@src/prisma";
 import { customResponse } from "@src/v1/utils/Response.util";
 import createError from "http-errors";
 import dayjs from "dayjs";
@@ -7,6 +8,35 @@ import { v4 as uuidv4 } from "uuid";
 import config from "@src/v1/config";
 
 const consultationController = {
+  async createConsultation(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+      const pricingId = req.body.pricingId;
+      const pricing = await prisma.pricing.findUniqueOrThrow({
+        where: {
+          id: pricingId,
+        },
+      });
+      const consultationCount = pricing.numberOfSessions;
+      const consultationList = [];
+      for (let i = 0; i < consultationCount; i++) {
+        const ob = {
+          title: pricing.title,
+          hostId: pricing.userId,
+          attendeeId: userId,
+          durationInMinutes: pricing.durationInMinutes,
+        };
+        consultationList.push(ob);
+      }
+      await prisma.consultation.createMany({
+        data: consultationList,
+      });
+      res.json(customResponse(201, "Consultation created successfully"));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
   async scheduleEvent(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const googleCalender = google.calendar({

@@ -41,6 +41,7 @@ const userController = {
           dob: true,
           bio: true,
           phoneNumber: true,
+          email: true,
           doctor: {
             select: {
               id: true,

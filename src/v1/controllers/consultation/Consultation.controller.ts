@@ -6,9 +6,11 @@ import createError from "http-errors";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import config from "@src/v1/config";
+import Razorpay from "razorpay";
+import hmacSHA256 from "crypto-js/hmac-sha256";
 
 const consultationController = {
-  async createConsultation(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+  async createPaymentOrder(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.id as string;
       const pricingId = req.body.pricingId;
@@ -17,6 +19,46 @@ const consultationController = {
           id: pricingId,
         },
       });
+
+      const instance = new Razorpay({
+        key_id: config.RAZORPAY_KEY,
+        key_secret: config.RAZORPAY_SECRET,
+      });
+
+      const options = {
+        amount: pricing.costPerSession * pricing.numberOfSessions * 100, // amount in smallest currency unit
+        currency: "INR",
+        receipt: uuidv4(),
+        notes: {
+          pricing: pricing.id,
+          host: pricing.userId,
+          attendee: userId,
+        },
+      };
+
+      const order = await instance.orders.create(options);
+      res.json(customResponse(201, order));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async paymentSuccess(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { orderCreationId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      const generatedSignature = hmacSHA256(orderCreationId + "|" + razorpayPaymentId, config.RAZORPAY_SECRET);
+      if (generatedSignature !== razorpaySignature) {
+        res.json(customResponse(400, "Transaction is not legit"));
+      }
+      const userId = req.user?.id as string;
+      const pricingId = req.body.pricingId;
+      const pricing = await prisma.pricing.findUniqueOrThrow({
+        where: {
+          id: pricingId,
+        },
+      });
+
       const consultationCount = pricing.numberOfSessions;
       const consultationList = [];
       for (let i = 0; i < consultationCount; i++) {
@@ -31,7 +73,13 @@ const consultationController = {
       await prisma.consultation.createMany({
         data: consultationList,
       });
-      res.json(customResponse(201, "Consultation created successfully"));
+      res.json(
+        customResponse(200, {
+          message: "success",
+          orderId: razorpayOrderId,
+          paymentId: razorpayPaymentId,
+        })
+      );
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });
@@ -78,6 +126,86 @@ const consultationController = {
         },
       });
       res.json(customResponse(200, "Event Scheduled successfully"));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getAttendeePendingConsultations(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+
+      const consultations = await prisma.consultation.findMany({
+        where: {
+          attendeeId: userId,
+          isComplete: false,
+        },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          isComplete: true,
+          durationInMinutes: true,
+          attachment: true,
+          attendee: {
+            select: {
+              id: true,
+              picture: true,
+              name: true,
+              username: true,
+            },
+          },
+          host: {
+            select: {
+              id: true,
+              picture: true,
+              name: true,
+              username: true,
+            },
+          },
+        },
+      });
+      res.json(customResponse(200, consultations));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getAttendeeCompletedConsultations(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id as string;
+
+      const consultations = await prisma.consultation.findMany({
+        where: {
+          attendeeId: userId,
+          isComplete: true,
+        },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          isComplete: true,
+          durationInMinutes: true,
+          attachment: true,
+          attendee: {
+            select: {
+              id: true,
+              picture: true,
+              name: true,
+              username: true,
+            },
+          },
+          host: {
+            select: {
+              id: true,
+              picture: true,
+              name: true,
+              username: true,
+            },
+          },
+        },
+      });
+      res.json(customResponse(200, consultations));
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

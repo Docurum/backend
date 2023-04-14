@@ -5,7 +5,10 @@ import { consultationController } from "@v1/controllers";
 const router: Router = express.Router();
 
 /// https://www.docurum.com/payment/razorpay (for razorpay payments)
-router.post("/create-consultation", authMiddleware, consultationController.scheduleEvent);
+router.post("/create-payment-order", authMiddleware, consultationController.createPaymentOrder);
 router.post("/schedule-event", authMiddleware, consultationController.scheduleEvent);
+router.post("/payment-success", authMiddleware, consultationController.paymentSuccess);
+router.get("/get-attendee-pending-consultations", authMiddleware, consultationController.getAttendeePendingConsultations);
+router.get("/get-attendee-completed-consultations", authMiddleware, consultationController.getAttendeeCompletedConsultations);
 
 export default router;

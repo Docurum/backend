@@ -29,6 +29,7 @@ export const envSchema = z
     GOOGLE_API_KEY: z.string().min(1),
     RAZORPAY_KEY: z.string().min(1),
     RAZORPAY_SECRET: z.string().min(1),
+    OPEN_AI_API_KEY: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   })
   .transform((env) => {

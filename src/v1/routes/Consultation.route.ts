@@ -10,5 +10,6 @@ router.post("/schedule-event", authMiddleware, consultationController.scheduleEv
 router.post("/payment-success", authMiddleware, consultationController.paymentSuccess);
 router.get("/get-attendee-pending-consultations", authMiddleware, consultationController.getAttendeePendingConsultations);
 router.get("/get-attendee-completed-consultations", authMiddleware, consultationController.getAttendeeCompletedConsultations);
+router.post("/get-ai-chat-completion", authMiddleware, consultationController.getAiChatCompletion);
 
 export default router;

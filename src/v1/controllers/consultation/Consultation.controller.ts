@@ -8,6 +8,13 @@ import { v4 as uuidv4 } from "uuid";
 import config from "@src/v1/config";
 import Razorpay from "razorpay";
 import hmacSHA256 from "crypto-js/hmac-sha256";
+import { Configuration, OpenAIApi } from "openai";
+
+const openAi = new OpenAIApi(
+  new Configuration({
+    apiKey: config.OPEN_AI_API_KEY,
+  })
+);
 
 const consultationController = {
   async createPaymentOrder(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
@@ -206,6 +213,30 @@ const consultationController = {
         },
       });
       res.json(customResponse(200, consultations));
+    } catch (err) {
+      console.log(err);
+      return next({ status: createError.InternalServerError().status, message: err });
+    }
+  },
+  async getAiChatCompletion(req: Request<{}, {}, any>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const message = req.body.message;
+      const userId = req.user?.id as string;
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: userId,
+        },
+      });
+      if (!user.isAdmin) {
+        res.json(customResponse(200, "Only verified doctors and admins can generate messages"));
+      }
+      if (user.isAdmin) {
+        const response = await openAi.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: message }],
+        });
+        res.json(customResponse(200, response.data.choices[0].message?.content));
+      }
     } catch (err) {
       console.log(err);
       return next({ status: createError.InternalServerError().status, message: err });

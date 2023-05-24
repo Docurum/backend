@@ -228,6 +228,31 @@ CREATE TABLE "Clinic" (
     CONSTRAINT "Clinic_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Availability" (
+    "id" TEXT NOT NULL,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3) NOT NULL,
+    "day" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Availability_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ConsultTimeAndPlace" (
+    "id" TEXT NOT NULL,
+    "start_time" TEXT NOT NULL,
+    "end_time" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "no_of_consultations" INTEGER NOT NULL,
+    "availabilityId" TEXT,
+
+    CONSTRAINT "ConsultTimeAndPlace_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
@@ -302,3 +327,6 @@ ALTER TABLE "DownVoteOnComment" ADD CONSTRAINT "DownVoteOnComment_commentId_fkey
 
 -- AddForeignKey
 ALTER TABLE "DownVoteOnComment" ADD CONSTRAINT "DownVoteOnComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ConsultTimeAndPlace" ADD CONSTRAINT "ConsultTimeAndPlace_availabilityId_fkey" FOREIGN KEY ("availabilityId") REFERENCES "Availability"("id") ON DELETE SET NULL ON UPDATE CASCADE;

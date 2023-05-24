@@ -233,3 +233,24 @@ enum emailCategory {
   VERIFYMAIL
   RESETPASSWORD
 }
+
+model Availability {
+  id         String                @id @default(cuid())
+  start_date DateTime
+  end_date   DateTime
+  day        String
+  timings    ConsultTimeAndPlace[]
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+}
+
+model ConsultTimeAndPlace {
+  id                  String        @id @default(cuid())
+  start_time          String
+  end_time            String
+  type                String
+  location            String
+  no_of_consultations Int
+  Availability        Availability? @relation(fields: [availabilityId], references: [id])
+  availabilityId      String?
+}

@@ -37,6 +37,7 @@ model User {
   Pricing                  Pricing[]
   UserHostConsultation     Consultation[]      @relation("UserConsultationHost")
   UserAttendeeConsultation Consultation[]      @relation("UserConsultationAttendee")
+  Availability             Availability[]
 }
 
 model Pricing {
@@ -240,6 +241,8 @@ model Availability {
   end_date   DateTime
   day        String
   timings    ConsultTimeAndPlace[]
+  user       User                  @relation(fields: [userId], references: [id])
+  userId     String
   createdAt  DateTime              @default(now())
   updatedAt  DateTime              @updatedAt
 }

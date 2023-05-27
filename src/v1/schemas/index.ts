@@ -8,7 +8,7 @@ export const envSchema = z
     PORT: z
       .string()
       .min(1)
-      .default("5000")
+      .default("8080")
       .transform((port) => Number(port)),
     FRONTEND_URL: z.string().default("https://www.docurum.com"),
     DEV_DB_URL: z.string().min(1),

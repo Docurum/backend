@@ -5,7 +5,7 @@ import { ZodError } from "zod";
 const startServer = (): void => {
   try {
     const result = envSchema.parse(process.env);
-    const PORT: number = result.PORT || 1337;
+    const PORT: number = result.PORT || 8080;
     app.listen(PORT, () => {
       if (result.NODE_ENV === "development") {
         console.log(`🚀 @ http://localhost:${PORT}`);

@@ -4,6 +4,11 @@ This is a API starter is bootstrapped with [`create-api-starter`](https://www.np
 
 Install npm packages and run the development server:
 
+// azure web service configuration in package.json
+npx ts-node -> node node_modules/ts-node/dist/bin.js
+npx tsc -> node_modules/typescript/bin/tsc
+copyfiles -> node_modules/copyfiles/copyfiles
+
 ```
 npm install
 npm run dev

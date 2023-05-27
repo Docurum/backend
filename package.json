@@ -23,8 +23,8 @@
     "genkeys": "npx ts-node src/helpers/generate_keys.ts"
   },
   "engines": {
-    "npm": "<=9.5.0",
-    "node": "<=18.14.2"
+    "npm": "<=9.5.1",
+    "node": "<=18.16.0"
   },
   "keywords": [],
   "author": "Pinaki Bhattacharjee <pinakipb2@gmail.com>",

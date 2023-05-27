@@ -9,10 +9,10 @@
   },
   "scripts": {
     "start": "npx ts-node --files src/server.ts",
-    "prestart": "npm i && node_modules/typescript/bin/tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
+    "prestart": "npm i && npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
     "prod": "npx ts-node --files src/server.ts",
-    "build": "node_modules/typescript/bin/tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
+    "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
     "upgradeTestEnv": "npx ts-node src/env/upgradeTest.ts",

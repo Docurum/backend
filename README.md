@@ -9,6 +9,9 @@ npx ts-node -> node node_modules/ts-node/dist/bin.js
 npx tsc -> node_modules/typescript/bin/tsc
 copyfiles -> node_modules/copyfiles/copyfiles
 
+// for aws
+"prestart": "npm i && node_modules/typescript/bin/tsc && node_modules/copyfiles/copyfiles -u 1 src/\*_/_.{ico,html,png,jpg,jpeg,svg} build",
+
 ```
 npm install
 npm run dev

@@ -8,10 +8,11 @@
     "@v1": "build/v1"
   },
   "scripts": {
-    "start": "node node_modules/ts-node/dist/bin.js --files src/server.ts",
+    "start": "npx ts-node --files src/server.ts",
+    "prestart": "npm i && npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "dev": "npm run downgradeTestEnv && nodemon --files src/server.ts",
-    "prod": "node node_modules/ts-node/dist/bin.js --files src/server.ts",
-    "build": "node_modules/typescript/bin/tsc && node_modules/copyfiles/copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
+    "prod": "npx ts-node --files src/server.ts",
+    "build": "npx tsc && copyfiles -u 1 src/**/*.{ico,html,png,jpg,jpeg,svg} build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
     "upgradeTestEnv": "npx ts-node src/env/upgradeTest.ts",
